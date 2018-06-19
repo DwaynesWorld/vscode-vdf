@@ -1,0 +1,62 @@
+{
+	"beg": {
+		"prefix": "beg",
+		"body": "\nBegin\n\t$1\nEnd\n",
+		"description": "Begin End snippet",
+		"scope": "source.vdf"
+	},
+	"els": {
+		"prefix": "els",
+		"body": "\nElse Begin\n\t$1\nEnd\n",
+		"description": "Esle Begin End snippet",
+		"scope": "source.vdf"
+	},
+	"For": {
+		"prefix": "For",
+		"body": "\nFor ${1:i} from 0 to $2\n\t$3\nLoop\n",
+		"description": "For Loop snippet",
+		"scope": "source.vdf"
+	},
+	"Func": {
+		"prefix": "Func",
+		"body": "\nFunction ${1:FunctionName} ${2:Parameters} Returns $3\n\t${3} ${4:${3/(.).*([])?/\\l\\1/}}\n\t$5\n\tFunction_Return $4 \nEnd_Function\n",
+		"description": "Function snippet",
+		"scope": "source.vdf"
+	},
+	"if": {
+		"prefix": "if",
+		"body": "\nIf (${1:Condition}) Begin\n\t$2\nEnd\n",
+		"description": "If Begin End snippet",
+		"scope": "source.vdf"
+	},
+	"ife": {
+		"prefix": "ife",
+		"body": "\nIf (${1:Condition}) Begin\n\t$2\nEnd\nElse Begin\n\t$3\nEnd\n",
+		"description": "If Else snippet",
+		"scope": "source.vdf"
+	},
+	"mo": {
+		"prefix": "mo",
+		"body": "\nMove ${1:Value1} to ${2:Value2}\n",
+		"description": "Move snippet",
+		"scope": "source.vdf"
+	},
+	"Proc": {
+		"prefix": "Proc",
+		"body": "\nProcedure ${1:ProcedureName} ${2:Parameters}\n\t${3:}\nEnd_Procedure\n",
+		"description": "Proceduer snippet",
+		"scope": "source.vdf"
+	},
+	"prosys": {
+		"prefix": "prosys",
+		"body": "\nProcedure ${1:name} ${2:Parameters}\n\tForward Send $1\n\t$3\nEnd_Procedure\n",
+		"description": "Augmented Procedure snippet",
+		"scope": "source.vdf"
+	},
+	"msgyn": {
+		"prefix": "msgyn",
+		"body": "\nInteger eResponse\nMove (YesNo_Box(\"¿${1:pregunta}?\", \"\", MB_DEFBUTTON2)) to eResponse\nIf (eResponse = MBR_YES) Begin\n\t${2}\nEnd\n",
+		"description": "Yes No Message Snippet",
+		"scope": "source.vdf"
+	}
+}
