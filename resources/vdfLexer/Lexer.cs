@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
@@ -8,9 +9,9 @@ using VdfLexer.Models;
 
 namespace VdfLexer {
     public class Lexer {
-        private const string OBJECT_PATTERN = "(object|cd_popup_object)\\s(?=\\w+\\sis)";
-        private const string PROCEDURE_PATTERN = "(object|cd_popup_object)\\s(?=\\w+\\sis)";
-        private const string FUNCTION_PATTERN = "(object|cd_popup_object)\\s(?=\\w+\\sis)";
+        private const string OBJECT_PATTERN = "(\\bobject\\b|\\bcd_popup_object\\b|\\bhcss_Ccd_object\\b)(?=\\s+\\w+\\s+is)";
+        private const string PROCEDURE_PATTERN = "(\\bprocedure\\b)(?=\\s+)";
+        private const string FUNCTION_PATTERN = "(\\bfunction\\b)(?=(\\s+\\w+)+(\\s+\\breturns\\b\\s+)\\s*)";
         private string SourceFolder;
         private string IndexFile;
         private LanguageIndex Index;
@@ -18,16 +19,33 @@ namespace VdfLexer {
         public Lexer(string sourceFolder, string indexFile) {
             SourceFolder = sourceFolder;
             IndexFile = indexFile;
-            LoadIndex();
         }
 
         public void Run(bool reindex = false) {
+            LoadIndex();
+            CreateIndex(reindex);
+            OutputIndex();
+        }
+
+        private void LoadIndex() {
+            if (File.Exists(IndexFile)) {
+                var indexText = File.ReadAllText(IndexFile);
+                Index = JsonConvert.DeserializeObject<LanguageIndex>(indexText);
+            } else {
+                Index = new LanguageIndex();
+            }
+        }
+
+        private void CreateIndex(bool reindex) {
+            var sourceFileDictionary = Index.Files.ToDictionary(f => f.FilePath);
+
             foreach (var filePath in Directory.EnumerateFiles(SourceFolder, "*.*", SearchOption.AllDirectories)) {
                 var sourceFile = new SourceFile();
                 var hash = GetChecksum(filePath);
-                var hasKey = Index.Files.ContainsKey(filePath);
 
-                if (reindex || !hasKey || Index.Files[filePath].Hash != hash) {
+                var hasKey = sourceFileDictionary.ContainsKey(filePath);
+
+                if (reindex || !hasKey || sourceFileDictionary[filePath].Hash != hash) {
                     var fileInfo = new FileInfo(filePath);
 
                     (sourceFile.Objects, sourceFile.Procedures, sourceFile.Functions) = AnalyzeFile(filePath);
@@ -35,23 +53,21 @@ namespace VdfLexer {
                     sourceFile.FileName = fileInfo.Name;
                     sourceFile.Hash = hash;
                     sourceFile.LastModified = DateTime.Now;
-                }
 
-                if (hasKey)
-                    Index.Files[filePath] = sourceFile;
-                else
-                    Index.Files.Add(filePath, sourceFile);
+                    if (hasKey)
+                        sourceFileDictionary[filePath] = sourceFile;
+                    else
+                        sourceFileDictionary.Add(filePath, sourceFile);
+                }
             }
 
+            Index.Files = sourceFileDictionary.Values.ToList();
             Index.LastUpdated = DateTime.Now;
         }
 
-        private void LoadIndex() {
-            if (File.Exists(IndexFile)) {
-                Index = JsonConvert.DeserializeObject(IndexFile) as LanguageIndex;
-            } else {
-                Index = new LanguageIndex();
-            }
+        private void OutputIndex() {
+            var indexText = JsonConvert.SerializeObject(Index, Formatting.Indented);
+            File.WriteAllText(IndexFile, indexText);
         }
 
         private(List<Definition> Objects, List<Definition> Procedures, List<Definition> Functions) AnalyzeFile(string filePath) {
@@ -62,13 +78,16 @@ namespace VdfLexer {
             var lines = File.ReadAllLines(filePath);
 
             for (int i = 0; i < lines.Length; i++) {
-                var line = lines[i];
-                line = line.Trim().Remove(line.IndexOf("//"));
+                var originalLine = lines[i];
+                var line = lines[i].Trim();
+                var commentPos = line.IndexOf("//");
+                if (commentPos != -1)
+                    line = line.Remove(commentPos);
 
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
 
-                var definition = ParseLine(line);
+                var definition = ParseLine(line, originalLine);
 
                 if (definition == null)
                     continue;
@@ -94,32 +113,33 @@ namespace VdfLexer {
             return (objects, procedures, functions);
         }
 
-        private Definition ParseLine(string line) {
+        private Definition ParseLine(string line, string originalLine) {
             if (Regex.IsMatch(line, OBJECT_PATTERN, RegexOptions.IgnoreCase))
-                return ParseObjectDeclaration(line);
+                return ParseObjectDeclaration(line, originalLine);
             else if (Regex.IsMatch(line, PROCEDURE_PATTERN, RegexOptions.IgnoreCase))
-                return ParseProcedureDeclaration(line);
+                return ParseProcedureDeclaration(line, originalLine);
             else if (Regex.IsMatch(line, FUNCTION_PATTERN, RegexOptions.IgnoreCase))
-                return ParseFunctionDeclaration(line);
+                return ParseFunctionDeclaration(line, originalLine);
 
             return null;
         }
 
-        private Definition ParseObjectDeclaration(string line) {
+        private Definition ParseObjectDeclaration(string line, string originalLine) {
             var definition = new Definition();
             definition.Type = DefinitionType.Object;
-
+            //Get Object Name
+            //Get Object Name Column in orginal line
             return definition;
         }
 
-        private Definition ParseProcedureDeclaration(string line) {
+        private Definition ParseProcedureDeclaration(string line, string originalLine) {
             var definition = new Definition();
             definition.Type = DefinitionType.Procedure;
 
             return definition;
         }
 
-        private Definition ParseFunctionDeclaration(string line) {
+        private Definition ParseFunctionDeclaration(string line, string originalLine) {
             var definition = new Definition();
             definition.Type = DefinitionType.Function;
 

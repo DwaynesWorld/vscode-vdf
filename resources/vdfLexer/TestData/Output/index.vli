@@ -1,0 +1,628 @@
+{
+  "LastUpdated": "2018-06-21T13:16:54.1114963-05:00",
+  "Files": [
+    {
+      "FileName": "About.dg",
+      "FilePath": "C:\\Users\\kyle.thompson\\.vscode\\extensions\\vs-code.vdfpack-0.0.1\\resources\\vdfLexer/TestData/Input\\About.dg",
+      "Hash": "D7D81DB48C3E0C1B41725F77426C21B18E21E1C199A83E298F291C84624FADD7",
+      "LastModified": "2018-06-21T13:14:14.0643561-05:00",
+      "Objects": [
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 84,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 91,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 97,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 105,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 114,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 118,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 131,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 135,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 140,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 144,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 160,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 185,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 211,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 217,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 229,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 235,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 246,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 252,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 258,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 264,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 271,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 276,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 286,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 295,
+          "Column": 0
+        }
+      ],
+      "Procedures": [
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 121,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 145,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 161,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 186,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 224,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 241,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 281,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 290,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 299,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 305,
+          "Column": 0
+        }
+      ],
+      "Functions": []
+    },
+    {
+      "FileName": "EstimateHistory_ManageArchivedEstimates.dg",
+      "FilePath": "C:\\Users\\kyle.thompson\\.vscode\\extensions\\vs-code.vdfpack-0.0.1\\resources\\vdfLexer/TestData/Input\\EstimateHistory_ManageArchivedEstimates.dg",
+      "Hash": "7DA5F6393D9A3D92DA8CDA81CE2C5617941A263182C86A00011534A501EE7EC0",
+      "LastModified": "2018-06-21T13:14:14.0683851-05:00",
+      "Objects": [
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 10,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 29,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 34,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 37,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 45,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 56,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 97,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 114,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 121,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 127,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 168,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 331,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 339,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 347,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 357,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 364,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 370,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 379,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 388,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 396,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 404,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 412,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 420,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 428,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 461,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 472,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 488,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 530,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 550,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 573,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 0,
+          "Line": 600,
+          "Column": 0
+        }
+      ],
+      "Procedures": [
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 51,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 62,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 70,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 105,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 133,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 147,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 152,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 198,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 287,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 293,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 299,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 305,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 433,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 439,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 444,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 449,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 466,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 477,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 493,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 536,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 556,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 580,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 605,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 610,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 619,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 636,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 689,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 2,
+          "Line": 705,
+          "Column": 0
+        }
+      ],
+      "Functions": [
+        {
+          "Name": null,
+          "Type": 1,
+          "Line": 180,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 1,
+          "Line": 189,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 1,
+          "Line": 204,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 1,
+          "Line": 498,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 1,
+          "Line": 519,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 1,
+          "Line": 657,
+          "Column": 0
+        },
+        {
+          "Name": null,
+          "Type": 1,
+          "Line": 671,
+          "Column": 0
+        }
+      ]
+    }
+  ]
+}

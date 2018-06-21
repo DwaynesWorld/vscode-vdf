@@ -5,6 +5,6 @@ using System.Linq;
 namespace VdfLexer.Models {
     public class LanguageIndex {
         public DateTime LastUpdated { get; set; }
-        public Dictionary<string, SourceFile> Files { get; set; } = new Dictionary<string, SourceFile>();
+        public List<SourceFile> Files { get; set; } = new List<SourceFile>();
     }
 }
