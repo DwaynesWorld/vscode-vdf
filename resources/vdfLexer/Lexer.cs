@@ -21,12 +21,13 @@ namespace VdfLexer {
             LoadIndex();
         }
 
-        public void Run() {
+        public void Run(bool reindex = false) {
             foreach (var filePath in Directory.EnumerateFiles(SourceFolder, "*.*", SearchOption.AllDirectories)) {
                 var sourceFile = new SourceFile();
                 var hash = GetChecksum(filePath);
+                var hasKey = Index.Files.ContainsKey(filePath);
 
-                if (!Index.Files.ContainsKey(filePath) || Index.Files[filePath].Hash != hash) {
+                if (reindex || !hasKey || Index.Files[filePath].Hash != hash) {
                     var fileInfo = new FileInfo(filePath);
 
                     (sourceFile.Objects, sourceFile.Procedures, sourceFile.Functions) = AnalyzeFile(filePath);
@@ -36,7 +37,7 @@ namespace VdfLexer {
                     sourceFile.LastModified = DateTime.Now;
                 }
 
-                if (Index.Files.ContainsKey(filePath))
+                if (hasKey)
                     Index.Files[filePath] = sourceFile;
                 else
                     Index.Files.Add(filePath, sourceFile);
