@@ -54,10 +54,10 @@ namespace VdfLexer {
             }
         }
 
-        private(List<Declaration> Objects, List<Declaration> Procedures, List<Declaration> Functions) AnalyzeFile(string filePath) {
-            var objects = new List<Declaration>();
-            var procedures = new List<Declaration>();
-            var functions = new List<Declaration>();
+        private(List<Definition> Objects, List<Definition> Procedures, List<Definition> Functions) AnalyzeFile(string filePath) {
+            var objects = new List<Definition>();
+            var procedures = new List<Definition>();
+            var functions = new List<Definition>();
 
             var lines = File.ReadAllLines(filePath);
 
@@ -68,22 +68,22 @@ namespace VdfLexer {
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
 
-                var declaration = ParseLine(line);
+                var definition = ParseLine(line);
 
-                if (declaration == null)
+                if (definition == null)
                     continue;
 
-                declaration.Line = i + 1;
+                definition.Line = i + 1;
 
-                switch (declaration.Type) {
-                    case DeclarationType.Object:
-                        objects.Add(declaration);
+                switch (definition.Type) {
+                    case DefinitionType.Object:
+                        objects.Add(definition);
                         break;
-                    case DeclarationType.Procedure:
-                        procedures.Add(declaration);
+                    case DefinitionType.Procedure:
+                        procedures.Add(definition);
                         break;
-                    case DeclarationType.Function:
-                        functions.Add(declaration);
+                    case DefinitionType.Function:
+                        functions.Add(definition);
                         break;
                     default:
                         throw new Exception("Unknown declaration type.");
@@ -94,7 +94,7 @@ namespace VdfLexer {
             return (objects, procedures, functions);
         }
 
-        private Declaration ParseLine(string line) {
+        private Definition ParseLine(string line) {
             if (Regex.IsMatch(line, OBJECT_PATTERN, RegexOptions.IgnoreCase))
                 return ParseObjectDeclaration(line);
             else if (Regex.IsMatch(line, PROCEDURE_PATTERN, RegexOptions.IgnoreCase))
@@ -105,25 +105,25 @@ namespace VdfLexer {
             return null;
         }
 
-        private Declaration ParseObjectDeclaration(string line) {
-            var declaration = new Declaration();
-            declaration.Type = DeclarationType.Object;
+        private Definition ParseObjectDeclaration(string line) {
+            var definition = new Definition();
+            definition.Type = DefinitionType.Object;
 
-            return declaration;
+            return definition;
         }
 
-        private Declaration ParseProcedureDeclaration(string line) {
-            var declaration = new Declaration();
-            declaration.Type = DeclarationType.Procedure;
+        private Definition ParseProcedureDeclaration(string line) {
+            var definition = new Definition();
+            definition.Type = DefinitionType.Procedure;
 
-            return declaration;
+            return definition;
         }
 
-        private Declaration ParseFunctionDeclaration(string line) {
-            var declaration = new Declaration();
-            declaration.Type = DeclarationType.Function;
+        private Definition ParseFunctionDeclaration(string line) {
+            var definition = new Definition();
+            definition.Type = DefinitionType.Function;
 
-            return declaration;
+            return definition;
         }
 
         private string GetChecksum(string filePath) {

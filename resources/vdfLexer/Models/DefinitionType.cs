@@ -1,5 +1,5 @@
 namespace VdfLexer.Models {
-    public enum DeclarationType {
+    public enum DefinitionType {
         Object,
         Function,
         Procedure

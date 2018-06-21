@@ -1,7 +1,7 @@
 namespace VdfLexer.Models {
-    public class Declaration {
+    public class Definition {
         public string Name { get; set; }
-        public DeclarationType Type { get; set; }
+        public DefinitionType Type { get; set; }
         public int Line { get; set; }
         public int Column { get; set; }
     }
