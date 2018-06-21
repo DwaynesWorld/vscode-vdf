@@ -19,45 +19,53 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [{
-            "command": "extension.IndentVDF",
-            "title": "VDF Indent"
-        }],
-        "languages": [{
-            "id": "vdf",
-            "aliases": [
-                "VDF",
-                "vdf",
-                "Vdf"
-            ],
-            "extensions": [
-                ".vw",
-                ".rv",
-                ".sl",
-                ".dg",
-                ".src",
-                ".dd",
-                ".pkg",
-                ".mod",
-                ".cls",
-                ".CLS",
-                ".bpo",
-                ".rpt",
-                ".mnu",
-                ".cal",
-                ".con"
-            ],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "vdf",
-            "scopeName": "source.vdf",
-            "path": "./syntaxes/VDF.tmLanguage"
-        }],
-        "snippets": [{
-            "language": "vdf",
-            "path": "./snippets/snippets.json"
-        }]
+        "commands": [
+            {
+                "command": "extension.IndentVDF",
+                "title": "VDF Indent"
+            }
+        ],
+        "languages": [
+            {
+                "id": "vdf",
+                "aliases": [
+                    "VDF",
+                    "vdf",
+                    "Vdf"
+                ],
+                "extensions": [
+                    ".vw",
+                    ".rv",
+                    ".sl",
+                    ".dg",
+                    ".src",
+                    ".dd",
+                    ".pkg",
+                    ".mod",
+                    ".cls",
+                    ".CLS",
+                    ".bpo",
+                    ".rpt",
+                    ".mnu",
+                    ".cal",
+                    ".con"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "vdf",
+                "scopeName": "source.vdf",
+                "path": "./syntaxes/VDF.tmLanguage"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "vdf",
+                "path": "./snippets/snippets.json"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
