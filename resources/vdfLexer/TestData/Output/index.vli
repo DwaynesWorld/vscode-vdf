@@ -1,628 +1,628 @@
 {
-  "LastUpdated": "2018-06-21T13:16:54.1114963-05:00",
+  "LastUpdated": "2018-06-21T23:37:20.947035-05:00",
   "Files": [
     {
-      "FileName": "About.dg",
-      "FilePath": "C:\\Users\\kyle.thompson\\.vscode\\extensions\\vs-code.vdfpack-0.0.1\\resources\\vdfLexer/TestData/Input\\About.dg",
-      "Hash": "D7D81DB48C3E0C1B41725F77426C21B18E21E1C199A83E298F291C84624FADD7",
-      "LastModified": "2018-06-21T13:14:14.0643561-05:00",
-      "Objects": [
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 84,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 91,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 97,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 105,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 114,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 118,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 131,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 135,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 140,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 144,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 160,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 185,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 211,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 217,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 229,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 235,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 246,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 252,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 258,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 264,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 271,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 276,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 286,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 0,
-          "Line": 295,
-          "Column": 0
-        }
-      ],
-      "Procedures": [
-        {
-          "Name": null,
-          "Type": 2,
-          "Line": 121,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 2,
-          "Line": 145,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 2,
-          "Line": 161,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 2,
-          "Line": 186,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 2,
-          "Line": 224,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 2,
-          "Line": 241,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 2,
-          "Line": 281,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 2,
-          "Line": 290,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 2,
-          "Line": 299,
-          "Column": 0
-        },
-        {
-          "Name": null,
-          "Type": 2,
-          "Line": 305,
-          "Column": 0
-        }
-      ],
-      "Functions": []
-    },
-    {
       "FileName": "EstimateHistory_ManageArchivedEstimates.dg",
-      "FilePath": "C:\\Users\\kyle.thompson\\.vscode\\extensions\\vs-code.vdfpack-0.0.1\\resources\\vdfLexer/TestData/Input\\EstimateHistory_ManageArchivedEstimates.dg",
-      "Hash": "7DA5F6393D9A3D92DA8CDA81CE2C5617941A263182C86A00011534A501EE7EC0",
-      "LastModified": "2018-06-21T13:14:14.0683851-05:00",
+      "FilePath": "/Users/KT/.vscode/extensions/vscode-vdf/resources/vdfLexer/TestData/Input/EstimateHistory_ManageArchivedEstimates.dg",
+      "Hash": "F9F71F2A910514A0687874D33E7F05A7EE32B4EDF435AF40D834DA947F1D80E4",
+      "LastModified": "2018-06-21T23:22:02.249201-05:00",
       "Objects": [
         {
-          "Name": null,
+          "Name": "oManageArchivedEstimates",
           "Type": 0,
           "Line": 10,
-          "Column": 0
+          "Column": 16
         },
         {
-          "Name": null,
+          "Name": "oEstimateHistoryQueryBuilder",
           "Type": 0,
           "Line": 29,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oEstMastDD",
           "Type": 0,
           "Line": 34,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oSearchForm",
           "Type": 0,
           "Line": 37,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oSearchButton",
           "Type": 0,
           "Line": 45,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oClearButton",
           "Type": 0,
           "Line": 56,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oFailureHelpLink",
           "Type": 0,
           "Line": 97,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oEstimateType",
           "Type": 0,
           "Line": 114,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oRadArchived",
           "Type": 0,
           "Line": 121,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oRadLive",
           "Type": 0,
           "Line": 127,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oEstimatesGrid",
           "Type": 0,
           "Line": 168,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oRowIndicator_Column",
           "Type": 0,
           "Line": 331,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oIDColumn",
           "Type": 0,
           "Line": 339,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oProcessedSuccessfullyColumn",
           "Type": 0,
           "Line": 347,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oCodeColumn",
           "Type": 0,
           "Line": 357,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oNameColumn",
           "Type": 0,
           "Line": 364,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oStatusColumn",
           "Type": 0,
           "Line": 370,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oProcessedColumn",
           "Type": 0,
           "Line": 379,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oVersionColumn",
           "Type": 0,
           "Line": 388,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oBidDateColumn",
           "Type": 0,
           "Line": 396,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oCreatedDateColumn",
           "Type": 0,
           "Line": 404,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oLastModifiedColumn",
           "Type": 0,
           "Line": 412,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oLastUploadedColumn",
           "Type": 0,
           "Line": 420,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oDetailColumn",
           "Type": 0,
           "Line": 428,
-          "Column": 0
+          "Column": 9
         },
         {
-          "Name": null,
+          "Name": "oCustomizeButton",
           "Type": 0,
           "Line": 461,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oFiltersButton",
           "Type": 0,
           "Line": 472,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oRefreshButton",
           "Type": 0,
           "Line": 488,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oCopyButton",
           "Type": 0,
           "Line": 530,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oRestoreButton",
           "Type": 0,
           "Line": 550,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oRemoveButton",
           "Type": 0,
           "Line": 573,
-          "Column": 0
+          "Column": 8
         },
         {
-          "Name": null,
+          "Name": "oCloseButton",
           "Type": 0,
           "Line": 600,
-          "Column": 0
+          "Column": 8
         }
       ],
       "Procedures": [
         {
-          "Name": null,
+          "Name": "OnClick",
           "Type": 2,
           "Line": 51,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "OnClick",
           "Type": 2,
           "Line": 62,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "ChangeEstimateTypeUI",
           "Type": 2,
           "Line": 70,
-          "Column": 0
+          "Column": 11
         },
         {
-          "Name": null,
+          "Name": "OnClick",
           "Type": 2,
           "Line": 105,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "Notify_Select_State",
           "Type": 2,
           "Line": 133,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "ResetEstimatesProperty",
           "Type": 2,
           "Line": 147,
-          "Column": 0
+          "Column": 11
         },
         {
-          "Name": null,
+          "Name": "ResetEstimatesList",
           "Type": 2,
           "Line": 152,
-          "Column": 0
+          "Column": 11
         },
         {
-          "Name": null,
+          "Name": "LoadInitialData",
           "Type": 2,
           "Line": 198,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "ConditionalColorError",
           "Type": 2,
           "Line": 287,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "ConditionalColorUntracked",
           "Type": 2,
           "Line": 293,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "ConditionalColorReset",
           "Type": 2,
           "Line": 299,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "ConditionalFormatting",
           "Type": 2,
           "Line": 305,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "OnSetDisplayMetrics",
           "Type": 2,
           "Line": 433,
-          "Column": 0
+          "Column": 13
         },
         {
-          "Name": null,
+          "Name": "OnCreate",
           "Type": 2,
           "Line": 439,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "RestoreLayout",
           "Type": 2,
           "Line": 444,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "ToggleColumnVisibility",
           "Type": 2,
           "Line": 449,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "OnClick",
           "Type": 2,
           "Line": 466,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "OnClick",
           "Type": 2,
           "Line": 477,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "OnClick",
           "Type": 2,
           "Line": 493,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "OnClick",
           "Type": 2,
           "Line": 536,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "OnClick",
           "Type": 2,
           "Line": 556,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "OnClick",
           "Type": 2,
           "Line": 580,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "OnClick",
           "Type": 2,
           "Line": 605,
-          "Column": 0
+          "Column": 12
         },
         {
-          "Name": null,
+          "Name": "InitiateSearch",
           "Type": 2,
           "Line": 610,
-          "Column": 0
+          "Column": 11
         },
         {
-          "Name": null,
+          "Name": "MakeNewRequest",
           "Type": 2,
           "Line": 619,
-          "Column": 0
+          "Column": 11
         },
         {
-          "Name": null,
+          "Name": "UpdateFiltersUI",
           "Type": 2,
           "Line": 636,
-          "Column": 0
+          "Column": 11
         },
         {
-          "Name": null,
+          "Name": "Page_Object",
           "Type": 2,
           "Line": 689,
-          "Column": 0
+          "Column": 11
         },
         {
-          "Name": null,
+          "Name": "Activate_EstimateHistory_ManageArchivedEstimates",
           "Type": 2,
           "Line": 705,
-          "Column": 0
+          "Column": 10
         }
       ],
       "Functions": [
         {
-          "Name": null,
+          "Name": "GetProcessedStatusDescription",
           "Type": 1,
           "Line": 180,
-          "Column": 0
+          "Column": 11
         },
         {
-          "Name": null,
+          "Name": "GetErrorDetailDescription",
           "Type": 1,
           "Line": 189,
-          "Column": 0
+          "Column": 11
         },
         {
-          "Name": null,
+          "Name": "LoadRemoteData",
           "Type": 1,
           "Line": 204,
-          "Column": 0
+          "Column": 11
         },
         {
-          "Name": null,
+          "Name": "ValidatePassword",
           "Type": 1,
           "Line": 498,
-          "Column": 0
+          "Column": 10
         },
         {
-          "Name": null,
+          "Name": "CanRetrieveCopyArchivedEstimate",
           "Type": 1,
           "Line": 519,
-          "Column": 0
+          "Column": 10
         },
         {
-          "Name": null,
+          "Name": "DeleteEstimate",
           "Type": 1,
           "Line": 657,
-          "Column": 0
+          "Column": 10
         },
         {
-          "Name": null,
+          "Name": "RetrieveEstimate",
           "Type": 1,
           "Line": 671,
-          "Column": 0
+          "Column": 10
         }
       ]
+    },
+    {
+      "FileName": "About.dg",
+      "FilePath": "/Users/KT/.vscode/extensions/vscode-vdf/resources/vdfLexer/TestData/Input/About.dg",
+      "Hash": "8D23A41D26A969FF0CEF47CF6DB7F9B6193AFD668000659F890403B3F2537EDA",
+      "LastModified": "2018-06-21T23:22:02.275616-05:00",
+      "Objects": [
+        {
+          "Name": "AboutPanel",
+          "Type": 0,
+          "Line": 84,
+          "Column": 16
+        },
+        {
+          "Name": "oBigLogo",
+          "Type": 0,
+          "Line": 91,
+          "Column": 8
+        },
+        {
+          "Name": "oDescLogo",
+          "Type": 0,
+          "Line": 97,
+          "Column": 8
+        },
+        {
+          "Name": "oFlowLayout",
+          "Type": 0,
+          "Line": 105,
+          "Column": 8
+        },
+        {
+          "Name": "oVersion",
+          "Type": 0,
+          "Line": 114,
+          "Column": 8
+        },
+        {
+          "Name": "oBuild",
+          "Type": 0,
+          "Line": 118,
+          "Column": 8
+        },
+        {
+          "Name": "oDateCreated",
+          "Type": 0,
+          "Line": 131,
+          "Column": 8
+        },
+        {
+          "Name": "oCompany",
+          "Type": 0,
+          "Line": 135,
+          "Column": 8
+        },
+        {
+          "Name": "oUser_Count",
+          "Type": 0,
+          "Line": 140,
+          "Column": 8
+        },
+        {
+          "Name": "oBonus_Count",
+          "Type": 0,
+          "Line": 144,
+          "Column": 8
+        },
+        {
+          "Name": "oRSMeans_Label",
+          "Type": 0,
+          "Line": 160,
+          "Column": 8
+        },
+        {
+          "Name": "oRichardson_Label",
+          "Type": 0,
+          "Line": 185,
+          "Column": 8
+        },
+        {
+          "Name": "oBottomContainer",
+          "Type": 0,
+          "Line": 211,
+          "Column": 8
+        },
+        {
+          "Name": "oWebLink",
+          "Type": 0,
+          "Line": 217,
+          "Column": 9
+        },
+        {
+          "Name": "oDivider",
+          "Type": 0,
+          "Line": 229,
+          "Column": 9
+        },
+        {
+          "Name": "oSupportLink",
+          "Type": 0,
+          "Line": 235,
+          "Column": 9
+        },
+        {
+          "Name": "oDivider",
+          "Type": 0,
+          "Line": 246,
+          "Column": 9
+        },
+        {
+          "Name": "oPhone",
+          "Type": 0,
+          "Line": 252,
+          "Column": 9
+        },
+        {
+          "Name": "oCopyRight",
+          "Type": 0,
+          "Line": 258,
+          "Column": 9
+        },
+        {
+          "Name": "oSmallLogo",
+          "Type": 0,
+          "Line": 264,
+          "Column": 9
+        },
+        {
+          "Name": "oHDivider",
+          "Type": 0,
+          "Line": 271,
+          "Column": 9
+        },
+        {
+          "Name": "Explorer_Button",
+          "Type": 0,
+          "Line": 276,
+          "Column": 9
+        },
+        {
+          "Name": "Sysinfo_Button",
+          "Type": 0,
+          "Line": 286,
+          "Column": 9
+        },
+        {
+          "Name": "Close_Button",
+          "Type": 0,
+          "Line": 295,
+          "Column": 9
+        }
+      ],
+      "Procedures": [
+        {
+          "Name": "End_Construct_Object",
+          "Type": 2,
+          "Line": 121,
+          "Column": 12
+        },
+        {
+          "Name": "End_Construct_Object",
+          "Type": 2,
+          "Line": 145,
+          "Column": 12
+        },
+        {
+          "Name": "End_Construct_Object",
+          "Type": 2,
+          "Line": 161,
+          "Column": 12
+        },
+        {
+          "Name": "End_Construct_Object",
+          "Type": 2,
+          "Line": 186,
+          "Column": 12
+        },
+        {
+          "Name": "OnClick",
+          "Type": 2,
+          "Line": 224,
+          "Column": 13
+        },
+        {
+          "Name": "OnClick",
+          "Type": 2,
+          "Line": 241,
+          "Column": 13
+        },
+        {
+          "Name": "OnClick",
+          "Type": 2,
+          "Line": 281,
+          "Column": 13
+        },
+        {
+          "Name": "OnClick",
+          "Type": 2,
+          "Line": 290,
+          "Column": 13
+        },
+        {
+          "Name": "OnClick",
+          "Type": 2,
+          "Line": 299,
+          "Column": 13
+        },
+        {
+          "Name": "Page_Object",
+          "Type": 2,
+          "Line": 305,
+          "Column": 11
+        }
+      ],
+      "Functions": []
     }
   ]
 }

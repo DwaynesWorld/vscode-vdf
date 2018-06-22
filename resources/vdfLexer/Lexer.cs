@@ -9,9 +9,6 @@ using VdfLexer.Models;
 
 namespace VdfLexer {
     public class Lexer {
-        private const string OBJECT_PATTERN = "(\\bobject\\b|\\bcd_popup_object\\b|\\bhcss_Ccd_object\\b)(?=\\s+\\w+\\s+is)";
-        private const string PROCEDURE_PATTERN = "(\\bprocedure\\b)(?=\\s+)";
-        private const string FUNCTION_PATTERN = "(\\bfunction\\b)(?=(\\s+\\w+)+(\\s+\\breturns\\b\\s+)\\s*)";
         private string SourceFolder;
         private string IndexFile;
         private LanguageIndex Index;
@@ -24,6 +21,7 @@ namespace VdfLexer {
         public void Run(bool reindex = false) {
             LoadIndex();
             CreateIndex(reindex);
+            CleanupIndex();
             OutputIndex();
         }
 
@@ -63,6 +61,20 @@ namespace VdfLexer {
 
             Index.Files = sourceFileDictionary.Values.ToList();
             Index.LastUpdated = DateTime.Now;
+        }
+
+        private void CleanupIndex() {
+            var removals = new List<SourceFile>();
+
+            foreach (var sourceFile in Index.Files) {
+                if (!File.Exists(sourceFile.FilePath))
+                    removals.Add(sourceFile);
+            }
+
+            if (removals.Any()) {
+                foreach (var removal in removals)
+                    Index.Files.Remove(removal);
+            }
         }
 
         private void OutputIndex() {
@@ -114,11 +126,11 @@ namespace VdfLexer {
         }
 
         private Definition ParseLine(string line, string originalLine) {
-            if (Regex.IsMatch(line, OBJECT_PATTERN, RegexOptions.IgnoreCase))
+            if (Regex.IsMatch(line, Language.OBJECT_PATTERN, RegexOptions.IgnoreCase))
                 return ParseObjectDeclaration(line, originalLine);
-            else if (Regex.IsMatch(line, PROCEDURE_PATTERN, RegexOptions.IgnoreCase))
+            else if (Regex.IsMatch(line, Language.PROCEDURE_PATTERN, RegexOptions.IgnoreCase))
                 return ParseProcedureDeclaration(line, originalLine);
-            else if (Regex.IsMatch(line, FUNCTION_PATTERN, RegexOptions.IgnoreCase))
+            else if (Regex.IsMatch(line, Language.FUNCTION_PATTERN, RegexOptions.IgnoreCase))
                 return ParseFunctionDeclaration(line, originalLine);
 
             return null;
@@ -127,22 +139,42 @@ namespace VdfLexer {
         private Definition ParseObjectDeclaration(string line, string originalLine) {
             var definition = new Definition();
             definition.Type = DefinitionType.Object;
-            //Get Object Name
-            //Get Object Name Column in orginal line
+            var nameMatch = Regex.Match(line, Language.OBJECT_NAME_PATTERN, RegexOptions.IgnoreCase);
+            if (nameMatch.Value != null) {
+                definition.Name = nameMatch.Value;
+                definition.Column = originalLine.IndexOf(definition.Name);
+            } else {
+                definition.Name = "UNKNOWN_OBJECT";
+                definition.Column = -1;
+            }
             return definition;
         }
 
         private Definition ParseProcedureDeclaration(string line, string originalLine) {
             var definition = new Definition();
             definition.Type = DefinitionType.Procedure;
-
+            var nameMatch = Regex.Match(line, Language.PROCEDURE_NAME_PATTERN, RegexOptions.IgnoreCase);
+            if (nameMatch.Groups.Count > 1) {
+                definition.Name = nameMatch.Groups[1].Value;
+                definition.Column = originalLine.IndexOf(definition.Name);
+            } else {
+                definition.Name = "UNKNOWN_PROCEDURE";
+                definition.Column = -1;
+            }
             return definition;
         }
 
         private Definition ParseFunctionDeclaration(string line, string originalLine) {
             var definition = new Definition();
             definition.Type = DefinitionType.Function;
-
+            var nameMatch = Regex.Match(line, Language.FUNCTION_NAME_PATTERN, RegexOptions.IgnoreCase);
+            if (nameMatch.Groups.Count > 1) {
+                definition.Name = nameMatch.Groups[1].Value;
+                definition.Column = originalLine.IndexOf(definition.Name);
+            } else {
+                definition.Name = "UNKNOWN_FUNCTION";
+                definition.Column = -1;
+            }
             return definition;
         }
 
