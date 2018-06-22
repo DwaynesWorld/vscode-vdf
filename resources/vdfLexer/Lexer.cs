@@ -64,17 +64,19 @@ namespace VdfLexer {
         }
 
         private void CleanupIndex() {
-            var removals = new List<SourceFile>();
+            Index.Files.RemoveAll(f => !File.Exists(f.FilePath));
 
-            foreach (var sourceFile in Index.Files) {
-                if (!File.Exists(sourceFile.FilePath))
-                    removals.Add(sourceFile);
-            }
+            // var removals = new List<SourceFile>();
 
-            if (removals.Any()) {
-                foreach (var removal in removals)
-                    Index.Files.Remove(removal);
-            }
+            // foreach (var sourceFile in Index.Files) {
+            //     if (!File.Exists(sourceFile.FilePath))
+            //         removals.Add(sourceFile);
+            // }
+
+            // if (removals.Any()) {
+            //     foreach (var removal in removals)
+            //         Index.Files.Remove(removal);
+            // }
         }
 
         private void OutputIndex() {
