@@ -12,6 +12,7 @@ namespace VdfLexer {
         private string SourceFolder;
         private string IndexFile;
         private LanguageIndex Index;
+        private string[] VdfExtensions = { ".VW", ".RV", ".SL", ".DG", ".SRC", ".DD", ".PKG", ".MOD", ".CLS", ".CLS", ".BPO", ".RPT", ".MNU", ".CAL", ".CON" };
 
         public Lexer(string sourceFolder, string indexFile) {
             SourceFolder = sourceFolder;
@@ -19,10 +20,17 @@ namespace VdfLexer {
         }
 
         public void Run(bool reindex = false) {
+            var start = DateTime.Now.Millisecond;
+
             LoadIndex();
             CreateIndex(reindex);
             CleanupIndex();
             OutputIndex();
+
+            var end = DateTime.Now.Millisecond;
+            var duration = end - start;
+            Console.WriteLine($"Time: {duration}");
+            Console.ReadKey();
         }
 
         private void LoadIndex() {
@@ -35,9 +43,11 @@ namespace VdfLexer {
         }
 
         private void CreateIndex(bool reindex) {
+
             var sourceFileDictionary = Index.Files.ToDictionary(f => f.FilePath);
 
-            foreach (var filePath in Directory.EnumerateFiles(SourceFolder, "*.*", SearchOption.AllDirectories)) {
+            foreach (var filePath in Directory.EnumerateFiles(SourceFolder, "*", SearchOption.AllDirectories)
+                    .Where(f => VdfExtensions.Contains(Path.GetExtension(f).ToUpper()))) {
                 var sourceFile = new SourceFile();
                 var hash = GetChecksum(filePath);
 
