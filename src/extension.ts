@@ -2,32 +2,38 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { execFile } from "child_process";
+import { vdfOnDidSaveTextDocument } from "./providers/documentEventHandlers";
+import { IndentVdfCommand } from "./providers/vscodeCommands";
+import { VdfProxyFactory } from "./languageServer/vdfProxyFactory";
+import { VdfDefinitionProvider } from "./providers/definitionProvider";
 
-function runVdfIndentation(document: vscode.TextDocument) {
-  if (document !== null) {
-    const extensionPath = vscode.extensions.getExtension("hcss.vdfpack")
-      .extensionPath;
-    let vdfSource = path.join(
-      extensionPath,
-      "resources\\indentation\\VDFSource.exe"
-    );
-    vscode.window.setStatusBarMessage(`Indenting: ${document.fileName}`, 5000);
-    execFile(vdfSource, [document.fileName]);
-  }
-}
+const VDF_LANGUAGE = "vdf";
+const VDF = [
+  { scheme: "file", language: VDF_LANGUAGE },
+  { scheme: "untitled", language: VDF_LANGUAGE }
+];
 
-function vdfOnDidSaveTextDocument(document: vscode.TextDocument) {
-  if (document.isUntitled || document.languageId !== "vdf") return;
-  runVdfIndentation(document);
-}
+var vdfProxyFactory = null;
 
 export function activate(context: vscode.ExtensionContext) {
   vscode.window.setStatusBarMessage('"vdfpack" is now active!', 3000);
+
+  // Extension
+  vdfProxyFactory = new VdfProxyFactory(context.extensionPath);
+  context.subscriptions.push(vdfProxyFactory);
+
+  //Register User commands
+  context.subscriptions.push(IndentVdfCommand);
+
+  //Register providers
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.IndentVDF", () => {
-      runVdfIndentation(vscode.window.activeTextEditor.document);
-    })
+    vscode.languages.registerDefinitionProvider(
+      VDF,
+      new VdfDefinitionProvider(vdfProxyFactory)
+    )
   );
+
+  //Handle Document Events
   vscode.workspace.onDidSaveTextDocument(
     vdfOnDidSaveTextDocument,
     null,

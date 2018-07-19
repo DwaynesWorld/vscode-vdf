@@ -20,17 +20,18 @@ namespace VdfLexer {
         }
 
         public void Run(bool reindex = false) {
-            var start = DateTime.Now.Millisecond;
+            // var watch = System.Diagnostics.Stopwatch.StartNew();
 
             LoadIndex();
             CreateIndex(reindex);
             CleanupIndex();
             OutputIndex();
 
-            var end = DateTime.Now.Millisecond;
-            var duration = end - start;
-            Console.WriteLine($"Time: {duration}");
-            Console.ReadKey();
+            // watch.Stop();
+            // var elapsedMs = watch.ElapsedMilliseconds;
+
+            // Console.WriteLine($"Time: {elapsedMs}");
+            // Console.ReadKey();
         }
 
         private void LoadIndex() {
@@ -45,9 +46,10 @@ namespace VdfLexer {
         private void CreateIndex(bool reindex) {
 
             var sourceFileDictionary = Index.Files.ToDictionary(f => f.FilePath);
+            var files = Directory.EnumerateFiles(SourceFolder, "*", SearchOption.AllDirectories)
+                .Where(f => VdfExtensions.Contains(Path.GetExtension(f).ToUpper()));
 
-            foreach (var filePath in Directory.EnumerateFiles(SourceFolder, "*", SearchOption.AllDirectories)
-                    .Where(f => VdfExtensions.Contains(Path.GetExtension(f).ToUpper()))) {
+            foreach (var filePath in files) {
                 var sourceFile = new SourceFile();
                 var hash = GetChecksum(filePath);
 
@@ -75,18 +77,6 @@ namespace VdfLexer {
 
         private void CleanupIndex() {
             Index.Files.RemoveAll(f => !File.Exists(f.FilePath));
-
-            // var removals = new List<SourceFile>();
-
-            // foreach (var sourceFile in Index.Files) {
-            //     if (!File.Exists(sourceFile.FilePath))
-            //         removals.Add(sourceFile);
-            // }
-
-            // if (removals.Any()) {
-            //     foreach (var removal in removals)
-            //         Index.Files.Remove(removal);
-            // }
         }
 
         private void OutputIndex() {
