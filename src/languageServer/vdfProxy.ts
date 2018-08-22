@@ -1,8 +1,14 @@
 import { Disposable } from "vscode";
-import { ChildProcess, spawn, SpawnOptions } from "child_process";
+import { ChildProcess, spawn, SpawnOptions, exec } from "child_process";
 import * as path from "path";
 import * as fs from "fs";
-import { ICommandResult, ICommand, IExecutionCommand } from "./proxy";
+import {
+  ICommandResult,
+  ICommand,
+  IExecutionCommand,
+  createDeferred,
+  IDefinitionResult
+} from "./proxy";
 
 export class VdfProxy implements Disposable {
   private proc?: ChildProcess;
@@ -51,6 +57,8 @@ export class VdfProxy implements Disposable {
     workspacePath: string,
     indexPath: string
   ) {
+    let self = this;
+
     var proc = spawn("dotnet", [exePath, workspacePath, indexPath]);
 
     proc.on("error", error => {
@@ -72,11 +80,62 @@ export class VdfProxy implements Disposable {
     proc.stdin.setDefaultEncoding("utf8");
 
     proc.stderr.on("data", function(data) {
-      console.log(data.toString());
+      console.log("Error Data: ", data.toString());
     });
 
-    proc.stdout.on("data", function(data) {
-      console.log(data.toString());
+    proc.stdout.on("data", function(stream) {
+      const response = stream.toString();
+
+      console.log("Out Data: ", response);
+
+      let data = JSON.parse(response);
+
+      // const responseId = JediProxy.getProperty<number>(response, 'id');
+      // if (!this.commands.has(responseId)) {
+      //   return;
+      // }
+      // const cmd = this.commands.get(responseId);
+      // if (!cmd) {
+      //   return;
+      // }
+      // this.lastCmdIdProcessed = cmd.id;
+      // if (JediProxy.getProperty<object>(response, 'arguments')) {
+      //   this.commandQueue.splice(this.commandQueue.indexOf(cmd.id), 1);
+      //   return;
+      // }
+
+      // this.commands.delete(responseId);
+      // const index = this.commandQueue.indexOf(cmd.id);
+      // if (index) {
+      //   this.commandQueue.splice(index, 1);
+      // }
+
+      // // Check if this command has expired.
+      // if (cmd.token.isCancellationRequested) {
+      //   this.safeResolve(cmd, undefined);
+      //   return;
+      // }
+
+      const cmd = self.commands.get(data.id);
+      const result: IDefinitionResult = {
+        requestId: 0,
+        definitions: [
+          {
+            rawType: "rawtype",
+            type: 1,
+            text: "string",
+            fileName: "string",
+            range: {
+              startLine: 1,
+              startColumn: 2,
+              endLine: 1,
+              endColumn: 5
+            }
+          }
+        ]
+      };
+
+      self.tryResolve(cmd, result);
     });
 
     this.proc = proc;
@@ -122,20 +181,56 @@ export class VdfProxy implements Disposable {
       return Promise.reject(new Error("VdfLexer process not initialized"));
     }
 
-    console.log(cmd);
+    const executionCmd = <IExecutionCommand<T>>cmd;
+    const payload = this.createPayload(executionCmd);
 
-    var message = { type: "Greeting", data: "Hello, World!" };
-    console.log("Sending: ", JSON.stringify(message));
-    this.proc.stdin.write(JSON.stringify(message) + "\n");
+    this.commands.set(executionCmd.id, executionCmd);
+    this.commandQueue.push(executionCmd.id);
+    executionCmd.deferred = createDeferred<T>();
 
-    return Promise.resolve("Success!");
+    try {
+      this.proc.stdin.write(`${JSON.stringify(payload)}\n`);
+      this.commands.set(executionCmd.id, executionCmd);
+      this.commandQueue.push(executionCmd.id);
+    } catch (ex) {
+      console.error(ex);
+      //If 'This socket is closed.' that means process didn't start at all (at least not properly).
+      if (ex.message === "This socket is closed.") {
+        this.killProcess();
+      }
+
+      return Promise.reject(ex);
+    }
+
+    return executionCmd.deferred.promise;
   }
 
   private createPayload<T extends ICommandResult>(
     cmd: IExecutionCommand<T>
-  ): any {}
+  ): any {
+    const payload = {
+      id: cmd.id,
+      prefix: "",
+      lookup: "",
+      path: cmd.fileName,
+      source: cmd.source,
+      line: cmd.lineIndex,
+      column: cmd.columnIndex
+    };
+
+    return payload;
+  }
 
   dispose() {
     this.killProcess();
+  }
+
+  private tryResolve(
+    command: IExecutionCommand<ICommandResult> | undefined | null,
+    result: ICommandResult | PromiseLike<ICommandResult> | undefined
+  ): void {
+    if (command && command.deferred) {
+      command.deferred.resolve(result);
+    }
   }
 }

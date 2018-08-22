@@ -1,6 +1,6 @@
 out
 node_modules
-resources/vdfLexer/TestData/Input/
+resources/vdfLexer/TestData/
 
 !resources/indentation/
 

@@ -42,9 +42,20 @@ export class VdfDefinitionProvider implements vscode.DefinitionProvider {
     return this.vdfProxyFactory
       .getVdfProxyHandler<IDefinitionResult>(document.uri)
       .sendCommand(cmd)
-      .then(data => {
+      .then(result => {
+        console.log(result);
+        const range = result.definitions[0].range;
+
         return Promise.resolve(
-          new vscode.Location(document.uri, new vscode.Range(0, 0, 0, 2))
+          new vscode.Location(
+            document.uri,
+            new vscode.Range(
+              range.startLine,
+              range.startColumn,
+              range.endLine,
+              range.endColumn
+            )
+          )
         );
       });
   }
