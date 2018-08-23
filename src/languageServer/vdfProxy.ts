@@ -7,7 +7,8 @@ import {
   ICommand,
   IExecutionCommand,
   createDeferred,
-  IDefinitionResult
+  IDefinitionResult,
+  CommandType
 } from "./proxy";
 
 export class VdfProxy implements Disposable {
@@ -85,57 +86,30 @@ export class VdfProxy implements Disposable {
 
     proc.stdout.on("data", function(stream) {
       const response = stream.toString();
-
       console.log("Out Data: ", response);
 
-      let data = JSON.parse(response);
+      let result: ICommandResult;
 
-      // const responseId = JediProxy.getProperty<number>(response, 'id');
-      // if (!this.commands.has(responseId)) {
-      //   return;
-      // }
-      // const cmd = this.commands.get(responseId);
-      // if (!cmd) {
-      //   return;
-      // }
-      // this.lastCmdIdProcessed = cmd.id;
-      // if (JediProxy.getProperty<object>(response, 'arguments')) {
-      //   this.commandQueue.splice(this.commandQueue.indexOf(cmd.id), 1);
-      //   return;
-      // }
+      try {
+        result = JSON.parse(response);
+      } catch {
+        return;
+      }
 
-      // this.commands.delete(responseId);
-      // const index = this.commandQueue.indexOf(cmd.id);
-      // if (index) {
-      //   this.commandQueue.splice(index, 1);
-      // }
-
-      // // Check if this command has expired.
-      // if (cmd.token.isCancellationRequested) {
-      //   this.safeResolve(cmd, undefined);
-      //   return;
-      // }
-
-      const cmd = self.commands.get(data.id);
-      const result: IDefinitionResult = {
-        requestId: 0,
-        definitions: [
-          {
-            rawType: "rawtype",
-            type: 1,
-            text: "string",
-            fileName: "string",
-            range: {
-              startLine: 1,
-              startColumn: 2,
-              endLine: 1,
-              endColumn: 5
-            }
+      if (result.requestId != null && self.commands.has(result.requestId)) {
+        const cmd = self.commands.get(result.requestId);
+        if (cmd) {
+          self.commands.delete(result.requestId);
+          const index = self.commandQueue.indexOf(cmd.id);
+          if (index !== -1) {
+            self.commandQueue.splice(index, 1);
           }
-        ]
-      };
 
-      self.tryResolve(cmd, result);
+          self.tryResolve(cmd, result);
+        }
+      }
+
+      return;
     });
 
     this.proc = proc;
@@ -211,9 +185,11 @@ export class VdfProxy implements Disposable {
     const payload = {
       id: cmd.id,
       prefix: "",
-      lookup: "",
+      lookup: cmd.command,
+      possibleWord: cmd.possibleWord,
       path: cmd.fileName,
       source: cmd.source,
+      workspacePath: this.workspacePath,
       line: cmd.lineIndex,
       column: cmd.columnIndex
     };
@@ -221,8 +197,16 @@ export class VdfProxy implements Disposable {
     return payload;
   }
 
-  dispose() {
+  public dispose() {
     this.killProcess();
+  }
+
+  private parseDefinitionResult(result: any): IDefinitionResult | undefined {
+    try {
+      return JSON.parse(result) as IDefinitionResult;
+    } catch {
+      return;
+    }
   }
 
   private tryResolve(

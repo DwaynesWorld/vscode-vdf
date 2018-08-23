@@ -22,17 +22,21 @@ export class VdfDefinitionProvider implements vscode.DefinitionProvider {
       return Promise.resolve(null);
     }
 
-    const filename = document.fileName;
+    const fileName = document.fileName;
     const range = document.getWordRangeAtPosition(position);
+    const possibleWord = document.getText(range);
+    const command = CommandType.Definitions;
+    const lineIndex = position.line;
     const columnIndex = range.isEmpty
       ? position.character
       : range.end.character;
 
     const cmd: ICommand<IDefinitionResult> = {
-      command: CommandType.Definitions,
-      fileName: filename,
-      columnIndex: columnIndex,
-      lineIndex: position.line
+      command,
+      possibleWord,
+      fileName,
+      columnIndex,
+      lineIndex
     };
 
     if (document.isDirty) {
@@ -44,19 +48,20 @@ export class VdfDefinitionProvider implements vscode.DefinitionProvider {
       .sendCommand(cmd)
       .then(result => {
         console.log(result);
-        const range = result.definitions[0].range;
+        const locations = result.definitions.map(def => {
+          try {
+            const uri = vscode.Uri.file(def.fileName);
+            const { startLine, startColumn, endLine, endColumn } = def.range;
+            return new vscode.Location(
+              uri,
+              new vscode.Range(startLine, startColumn, endLine, endColumn)
+            );
+          } catch {
+            return;
+          }
+        });
 
-        return Promise.resolve(
-          new vscode.Location(
-            document.uri,
-            new vscode.Range(
-              range.startLine,
-              range.startColumn,
-              range.endLine,
-              range.endColumn
-            )
-          )
-        );
+        return Promise.resolve(locations);
       });
   }
 }

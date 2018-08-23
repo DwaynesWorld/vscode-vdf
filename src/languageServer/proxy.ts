@@ -37,6 +37,7 @@ export interface IDefinitionResult extends ICommandResult {
 export interface ICommand<T extends ICommandResult> {
   telemetryEvent?: string;
   command: CommandType;
+  possibleWord: String;
   source?: string;
   fileName: string;
   lineIndex: number;
