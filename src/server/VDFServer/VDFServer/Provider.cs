@@ -16,6 +16,10 @@ namespace VDFServer
     public class Provider
     {
         public static volatile bool DoneIndexing = false;
+        public const string TAG_NOT_FOUND = "TAG_NOT_FOUND";
+        public const string NO_PROVIDER_FOUND = "NO_PROVIDER_FOUND";
+        public const string LANGUAGE_SERVER_INDEXING = "LANGUAGE_SERVER_INDEXING";
+        public const string LANGUAGE_SERVER_INDEXING_COMPLETE = "LANGUAGE_SERVER_INDEXING_COMPLETE";
 
         private ApplicationDbContext _ctx;
         private TagParser _parser;
@@ -24,6 +28,8 @@ namespace VDFServer
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
+
+
 
         public Provider(string indexPath, string workspaceRootPath)
         {
@@ -44,6 +50,7 @@ namespace VDFServer
             {
                 _parser.Run(false);
                 DoneIndexing = true;
+                Console.Write(LANGUAGE_SERVER_INDEXING_COMPLETE);
             });
         }
 
@@ -52,7 +59,7 @@ namespace VDFServer
             // TODO: This needs alot of cleanup 
             // and extending to handle multiple request types
             if (!DoneIndexing)
-                return "Indexing";
+                return LANGUAGE_SERVER_INDEXING;
 
             var request = JsonConvert.DeserializeObject<Request>(incomingPayload);
             switch (request.Lookup)
@@ -60,11 +67,11 @@ namespace VDFServer
                 case "4":
                     var results = ProvideDefinition(request);
                     if (results == null)
-                        return "";
+                        return TAG_NOT_FOUND;
                     else
                         return JsonConvert.SerializeObject(results, _serializerSettings);
                 default:
-                    return "";
+                    return NO_PROVIDER_FOUND;
             }
         }
 

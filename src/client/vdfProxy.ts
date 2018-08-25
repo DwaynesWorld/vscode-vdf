@@ -1,4 +1,4 @@
-import { Disposable } from "vscode";
+import { Disposable, CancellationToken } from "vscode";
 import { ChildProcess, spawn, SpawnOptions, exec } from "child_process";
 import * as path from "path";
 import * as fs from "fs";
@@ -29,19 +29,19 @@ export class VdfProxy implements Disposable {
 
   private async startLanguageServer(): Promise<void> {
     //TODO: Do any initializing
-
     return this.restartLanguageServer();
   }
 
   private restartLanguageServer(): Promise<void> {
     this.killProcess();
-    this.clearPendingRequests(this);
+    this.clearPendingRequests();
     return this.initialize();
   }
 
   private initialize(): Promise<void> {
     let exePath = path.join(
       this.extensionRootDir,
+      // TEMP: Final output will be in the resources folder
       "src/server/VDFServer/VDFServer/bin/Debug/netcoreapp2.1/VDFServer.dll"
     );
 
@@ -58,8 +58,6 @@ export class VdfProxy implements Disposable {
     workspacePath: string,
     indexPath: string
   ) {
-    let self = this;
-
     var proc = spawn("dotnet", [exePath, indexPath, workspacePath]);
 
     proc.on("error", error => {
@@ -80,64 +78,70 @@ export class VdfProxy implements Disposable {
 
     proc.stdin.setDefaultEncoding("utf8");
 
-    proc.stderr.on("data", function(data) {
+    proc.stderr.on("data", data => {
       console.log("Error Data: ", data.toString());
     });
 
-    proc.stdout.on("data", function(stream) {
-      // TODO: This is all trash, its somewhat working
-      // But needs alot of work.
+    proc.stdout.on("data", stream => {
       const response: string = stream.toString();
       console.log("Response Data: ", response);
 
-      if (response.indexOf("Indexing") !== -1) {
-        self.clearPendingRequests(self);
-      }
+      if (this.responseIsResult(response)) {
+        try {
+          let result: ICommandResult = JSON.parse(response);
+          if (result.requestId != null && this.commands.has(result.requestId)) {
+            const cmd = this.commands.get(result.requestId);
+            if (cmd) {
+              this.commands.delete(result.requestId);
 
-      let result: ICommandResult;
+              const index = this.commandQueue.indexOf(cmd.id);
+              if (index !== -1) {
+                this.commandQueue.splice(index, 1);
+              }
 
-      try {
-        result = JSON.parse(response);
-      } catch {
-        self.clearPendingRequests(self);
-        return;
-      }
-
-      if (result.requestId != null && self.commands.has(result.requestId)) {
-        const cmd = self.commands.get(result.requestId);
-        if (cmd) {
-          self.commands.delete(result.requestId);
-          const index = self.commandQueue.indexOf(cmd.id);
-          if (index !== -1) {
-            self.commandQueue.splice(index, 1);
+              if (cmd.token.isCancellationRequested) {
+                this.tryResolve(cmd, undefined);
+              } else {
+                this.tryResolve(cmd, result);
+              }
+            }
           }
-
-          self.tryResolve(cmd, result);
-          return;
-        }
+        } catch {}
       }
 
-      self.clearPendingRequests(self);
+      this.clearPendingRequests();
       return;
     });
 
     this.proc = proc;
   }
 
-  // TODO: This is trash as well
-  private clearPendingRequests(self: VdfProxy) {
-    const items = self.commandQueue.splice(0, self.commandQueue.length);
+  private clearPendingRequests() {
+    const items = this.commandQueue.splice(0, this.commandQueue.length);
     items.forEach(id => {
-      if (self.commands.has(id)) {
-        const cmd1 = self.commands.get(id);
-        try {
-          self.tryResolve(cmd1, undefined);
-        } catch (ex) {
-        } finally {
-          self.commands.delete(id);
-        }
+      if (this.commands.has(id)) {
+        const cmd = this.commands.get(id);
+        this.tryResolve(cmd, undefined);
+        this.commands.delete(id);
       }
     });
+  }
+
+  private responseIsResult(response: string): boolean {
+    if (
+      response === "TAG_NOT_FOUND" ||
+      response === "NO_PROVIDER_FOUND" ||
+      response === "LANGUAGE_SERVER_INDEXING"
+    )
+      return false;
+
+    if (response === "LANGUAGE_SERVER_INDEXING_COMPLETE") {
+      // TODO: Remove flame indicator
+      console.log(response);
+      return false;
+    }
+
+    return true;
   }
 
   private killProcess() {

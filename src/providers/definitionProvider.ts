@@ -41,7 +41,7 @@ export class VdfDefinitionProvider implements vscode.DefinitionProvider {
 
     return this.vdfProxyFactory
       .getVdfProxyHandler<IDefinitionResult>(document.uri)
-      .sendCommand(cmd)
+      .sendCommand(cmd, token)
       .then(result => {
         console.log(result);
 
