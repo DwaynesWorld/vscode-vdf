@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using VDFServer.Data;
 using VDFServer.Models;
 using VDFServer.Parser;
@@ -17,6 +19,11 @@ namespace VDFServer
 
         private ApplicationDbContext _ctx;
         private TagParser _parser;
+
+        private static JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
+        };
 
         public Provider(string indexPath, string workspaceRootPath)
         {
@@ -42,6 +49,8 @@ namespace VDFServer
 
         public string Provide(string incomingPayload)
         {
+            // TODO: This needs alot of cleanup 
+            // and extending to handle multiple request types
             if (!DoneIndexing)
                 return "Indexing";
 
@@ -53,7 +62,7 @@ namespace VDFServer
                     if (results == null)
                         return "";
                     else
-                        return JsonConvert.SerializeObject(results);
+                        return JsonConvert.SerializeObject(results, _serializerSettings);
                 default:
                     return "";
             }
@@ -62,7 +71,8 @@ namespace VDFServer
         private DefinitionResult ProvideDefinition(Request request)
         {
             var matches = _ctx.Tags
-                .Where(t => t.Name.Equals(request.PossibleWord, StringComparison.OrdinalIgnoreCase));
+                .Include(t => t.File)
+                .Where(t => t.Name.ToUpper() == request.PossibleWord.ToUpper());
 
             if (!matches.Any())
                 return null;
@@ -73,7 +83,7 @@ namespace VDFServer
             foreach (var match in matches)
             {
                 var def = new Definition();
-                def.FileName = match.File.FileName;
+                def.FilePath = match.File.FilePath;
                 def.RawType = "";
                 def.Text = "";
                 def.Type = request.Lookup;

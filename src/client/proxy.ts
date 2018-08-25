@@ -8,7 +8,7 @@ export interface IDefinition {
   rawType: string;
   type: number;
   text: string;
-  fileName: string;
+  filePath: string;
   range: IDefinitionRange;
 }
 

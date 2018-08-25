@@ -44,20 +44,25 @@ export class VdfDefinitionProvider implements vscode.DefinitionProvider {
       .sendCommand(cmd)
       .then(result => {
         console.log(result);
-        const locations = result.definitions.map(def => {
-          try {
-            const uri = vscode.Uri.file(def.fileName);
-            const { startLine, startColumn, endLine, endColumn } = def.range;
+
+        if (result) {
+          const locations = result.definitions.map(def => {
+            const uri = vscode.Uri.file(def.filePath);
             return new vscode.Location(
               uri,
-              new vscode.Range(startLine, startColumn, endLine, endColumn)
+              new vscode.Range(
+                def.range.startLine,
+                def.range.startColumn,
+                def.range.endLine,
+                def.range.endColumn
+              )
             );
-          } catch {
-            return;
-          }
-        });
+          });
 
-        return Promise.resolve(locations);
+          if (locations.length > 0) return Promise.resolve(locations);
+        }
+
+        return Promise.reject(null);
       });
   }
 }
