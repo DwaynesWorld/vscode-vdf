@@ -32,6 +32,7 @@ export class VdfProxyHandler<R extends ICommandResult> implements Disposable {
     const executionCmd = <IExecutionCommand<R>>cmd;
     executionCmd.id = executionCmd.id || this.vdfProxy.getNextCommandId();
 
+    // If a previous command of this same type exist, Cancel it!
     if (this.commandCancellationTokenSources.has(cmd.command)) {
       const ct = this.commandCancellationTokenSources.get(cmd.command);
       if (ct) {

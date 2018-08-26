@@ -10,6 +10,7 @@ import {
   IDefinitionResult,
   CommandType
 } from "./proxy";
+import { UI, getUI } from "../common/ui";
 
 export class VdfProxy implements Disposable {
   private proc?: ChildProcess;
@@ -20,10 +21,12 @@ export class VdfProxy implements Disposable {
   private previousData = "";
   private commands = new Map<number, IExecutionCommand<ICommandResult>>();
   private commandQueue: number[] = [];
+  private ui: UI;
 
   constructor(private extensionRootDir: string, workspacePath: string) {
     this.workspacePath = workspacePath;
     this.indexPath = this.getIndexPath();
+    this.ui = getUI();
     this.startLanguageServer();
   }
 
@@ -35,6 +38,7 @@ export class VdfProxy implements Disposable {
   private restartLanguageServer(): Promise<void> {
     this.killProcess();
     this.clearPendingRequests();
+    this.ui.IsUpdatingIndex = true;
     return this.initialize();
   }
 
@@ -42,7 +46,7 @@ export class VdfProxy implements Disposable {
     let exePath = path.join(
       this.extensionRootDir,
       // TEMP: Final output will be in the resources folder
-      "src/server/VDFServer/VDFServer/bin/Debug/netcoreapp2.1/VDFServer.dll"
+      "src/server/VDFServer/VDFServer/bin/Release/netcoreapp2.1/VDFServer.dll"
     );
 
     return this.spawnProcess(exePath, this.workspacePath, this.indexPath).catch(
@@ -136,7 +140,7 @@ export class VdfProxy implements Disposable {
       return false;
 
     if (response === "LANGUAGE_SERVER_INDEXING_COMPLETE") {
-      // TODO: Remove flame indicator
+      this.ui.IsUpdatingIndex = false;
       console.log(response);
       return false;
     }

@@ -31,27 +31,21 @@ namespace VDFServer.Parser
 
         private void BuildIndex(bool reindex)
         {
-            int counter = 0;
-
             var filePaths = Directory
-                .EnumerateFiles(_workspaceRootFolder, "*", SearchOption.AllDirectories)
-                .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper()));
+                 .EnumerateFiles(_workspaceRootFolder, "*", SearchOption.AllDirectories)
+                 .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper()));
 
             foreach (var path in filePaths)
             {
-                counter++;
-                System.Diagnostics.Debug.WriteLine(counter);
-
-                var hash = Hasher.GetFileHash(path);
+                var fileInfo = new FileInfo(path);
                 var sourceFile = _ctx.SourceFiles
                     .Include(s => s.Tags)
                     .Where(src => src.FilePath.ToUpper() == path.ToUpper())
-                    //.Where(src => src.FilePath.Equals(path))
                     .SingleOrDefault();
 
                 if (sourceFile != null)
                 {
-                    if (reindex || sourceFile.Hash != hash)
+                    if (reindex || sourceFile.LastWriteTime != fileInfo.LastWriteTime)
                     {
                         if (sourceFile.Tags == null)
                             sourceFile.Tags = new List<Tag>();
@@ -60,14 +54,13 @@ namespace VDFServer.Parser
 
                         var tags = ParseFile(path, sourceFile.Id);
                         sourceFile.Tags.AddRange(tags);
-                        sourceFile.Hash = hash;
+                        sourceFile.LastWriteTime = fileInfo.LastWriteTime;
                         sourceFile.LastUpdated = DateTime.Now;
                         _ctx.SourceFiles.Update(sourceFile);
                     }
                 }
                 else
                 {
-                    var fileInfo = new FileInfo(path);
                     sourceFile = new SourceFile();
 
                     if (sourceFile.Tags == null)
@@ -77,7 +70,7 @@ namespace VDFServer.Parser
                     sourceFile.Tags.AddRange(tags);
                     sourceFile.FilePath = path;
                     sourceFile.FileName = fileInfo.Name;
-                    sourceFile.Hash = hash;
+                    sourceFile.LastWriteTime = fileInfo.LastWriteTime;
                     sourceFile.LastUpdated = DateTime.Now;
                     _ctx.SourceFiles.Add(sourceFile);
                 }

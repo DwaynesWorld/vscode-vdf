@@ -29,8 +29,6 @@ namespace VDFServer
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
 
-
-
         public Provider(string indexPath, string workspaceRootPath)
         {
             var indexFile = $"{Hasher.GetStringHash(workspaceRootPath)}.db";
@@ -48,7 +46,13 @@ namespace VDFServer
 
             Task.Run(() =>
             {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+
                 _parser.Run(false);
+
+                watch.Stop();
+                System.Diagnostics.Debug.WriteLine($"Time: {watch.ElapsedMilliseconds}");
+
                 DoneIndexing = true;
                 Console.Write(LANGUAGE_SERVER_INDEXING_COMPLETE);
             });
