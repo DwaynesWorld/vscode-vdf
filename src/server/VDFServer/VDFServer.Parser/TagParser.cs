@@ -16,7 +16,7 @@ namespace VDFServer.Parser
         private ApplicationDbContext _ctx;
         private string _workspaceRootFolder;
         private string[] _vdfExtensions = { ".VW", ".RV", ".SL", ".DG", ".SRC", ".DD", ".PKG", ".MOD", ".CLS", ".CLS", ".BPO", ".RPT", ".MNU", ".CAL", ".CON" };
-        private string[] _skiplist = { "SET", "ONCLICK", "ACTIVATE", "ACTIVATING" };
+        private string[] _methodSkiplist = { "SET", "ONCLICK", "ACTIVATE", "ACTIVATING" };
 
         public TagParser(ApplicationDbContext ctx, string workspaceRootFolder)
         {
@@ -109,28 +109,29 @@ namespace VDFServer.Parser
 
         private Tag ParseLine(string line, string originalLine)
         {
-            if (Regex.IsMatch(line, Language.OBJECT_PATTERN, RegexOptions.IgnoreCase))
-                return ParseObjectDeclaration(line, originalLine);
+            if (Regex.IsMatch(line, Language.FUNCTION_PATTERN, RegexOptions.IgnoreCase))
+                return ParseFunctionDeclaration(line, originalLine);
             else if (Regex.IsMatch(line, Language.PROCEDURE_PATTERN, RegexOptions.IgnoreCase))
                 return ParseProcedureDeclaration(line, originalLine);
-            else if (Regex.IsMatch(line, Language.FUNCTION_PATTERN, RegexOptions.IgnoreCase))
-                return ParseFunctionDeclaration(line, originalLine);
+            else if (Regex.IsMatch(line, Language.OBJECT_PATTERN, RegexOptions.IgnoreCase))
+                return ParseClassObjectDeclaration(line, originalLine, false);
+            else if (Regex.IsMatch(line, Language.CLASS_PATTERN, RegexOptions.IgnoreCase))
+                return ParseClassObjectDeclaration(line, originalLine, true);
+            else if (Regex.IsMatch(line, Language.STRUCT_PATTERN, RegexOptions.IgnoreCase))
+                return ParseStructDeclaration(line, originalLine);
 
             return null;
         }
 
-        private Tag ParseObjectDeclaration(string line, string originalLine)
+        private Tag ParseClassObjectDeclaration(string line, string originalLine, bool isClass)
         {
-            var nameMatch = Regex.Match(line, Language.OBJECT_NAME_PATTERN, RegexOptions.IgnoreCase);
+            var nameMatch = Regex.Match(line, Language.CLASS_OBJECT_NAME_PATTERN, RegexOptions.IgnoreCase);
             if (nameMatch.Value != null)
             {
                 var tag = new Tag();
                 tag.Name = nameMatch.Value;
 
-                if (_skiplist.Contains(tag.Name.ToUpper()))
-                    return null;
-
-                tag.Type = TagType.Object;
+                tag.Type = isClass ? TagType.Class : TagType.Object;
                 tag.StartColumn = originalLine.IndexOf(tag.Name);
                 tag.EndColumn = tag.StartColumn + tag.Name.Length;
                 return tag;
@@ -147,7 +148,7 @@ namespace VDFServer.Parser
                 var tag = new Tag();
                 tag.Name = nameMatch.Groups[1].Value;
 
-                if (_skiplist.Contains(tag.Name.ToUpper()))
+                if (_methodSkiplist.Contains(tag.Name.ToUpper()))
                     return null;
 
                 tag.Type = TagType.Procedure;
@@ -167,10 +168,27 @@ namespace VDFServer.Parser
                 var tag = new Tag();
                 tag.Name = nameMatch.Groups[1].Value;
 
-                if (_skiplist.Contains(tag.Name.ToUpper()))
+                if (_methodSkiplist.Contains(tag.Name.ToUpper()))
                     return null;
 
                 tag.Type = TagType.Function;
+                tag.StartColumn = originalLine.IndexOf(tag.Name);
+                tag.EndColumn = tag.StartColumn + tag.Name.Length;
+                return tag;
+            }
+
+            return null;
+        }
+
+        private Tag ParseStructDeclaration(string line, string originalLine)
+        {
+            var nameMatch = Regex.Match(line, Language.STRUCT_NAME_PATTERN, RegexOptions.IgnoreCase);
+            if (nameMatch.Groups.Count > 1)
+            {
+                var tag = new Tag();
+                tag.Name = nameMatch.Groups[1].Value;
+
+                tag.Type = TagType.Struct;
                 tag.StartColumn = originalLine.IndexOf(tag.Name);
                 tag.EndColumn = tag.StartColumn + tag.Name.Length;
                 return tag;

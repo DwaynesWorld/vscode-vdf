@@ -28,7 +28,7 @@ namespace VDFServer
 
                 System.Diagnostics.Debug.WriteLine(payload);
 
-                Console.Write(provider.Provide(payload));
+                Console.WriteLine(provider.Provide(payload));
                 Console.Out.Flush();
             }
         }

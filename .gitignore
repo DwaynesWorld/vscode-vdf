@@ -1,8 +1,7 @@
 out
 node_modules
-resources/vdfLexer/TestData/
 
-!resources/indentation/
+!resources/
 
 #Sqlite
 *.db

@@ -31,6 +31,12 @@ namespace VDFServer
 
         public Provider(string indexPath, string workspaceRootPath)
         {
+            InitializeDatabase(indexPath, workspaceRootPath);
+            StartParser(workspaceRootPath);
+        }
+
+        private void InitializeDatabase(string indexPath, string workspaceRootPath)
+        {
             var indexFile = $"{Hasher.GetStringHash(workspaceRootPath)}.db";
             var indexFullName = Path.Combine(indexPath, indexFile);
 
@@ -42,6 +48,29 @@ namespace VDFServer
             _ctx = new ApplicationDbContext(options);
             _ctx.Database.EnsureCreated();
 
+            var version = _ctx.IndexVersion.SingleOrDefault();
+            if (version == null)
+            {
+                version = new IndexVersion { Version = ApplicationDbContext.CurrentVersion };
+                _ctx.IndexVersion.Add(version);
+                _ctx.SaveChanges();
+            }
+            else
+            {
+                if (version.Version < ApplicationDbContext.CurrentVersion)
+                {
+                    _ctx.Database.EnsureDeleted();
+                    _ctx.Database.EnsureCreated();
+                    version = new IndexVersion { Version = ApplicationDbContext.CurrentVersion };
+                    _ctx.IndexVersion.Add(version);
+                    _ctx.SaveChanges();
+                }
+            }
+
+        }
+
+        private void StartParser(string workspaceRootPath)
+        {
             _parser = new TagParser(_ctx, workspaceRootPath);
 
             Task.Run(() =>
@@ -51,10 +80,10 @@ namespace VDFServer
                 _parser.Run(false);
 
                 watch.Stop();
-                System.Diagnostics.Debug.WriteLine($"Time: {watch.ElapsedMilliseconds}");
+                System.Diagnostics.Debug.WriteLine(watch.ElapsedMilliseconds);
 
                 DoneIndexing = true;
-                Console.Write(LANGUAGE_SERVER_INDEXING_COMPLETE);
+                Console.WriteLine($"{LANGUAGE_SERVER_INDEXING_COMPLETE} - {watch.ElapsedMilliseconds / 1000}");
             });
         }
 

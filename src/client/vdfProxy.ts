@@ -1,18 +1,17 @@
-import { Disposable, CancellationToken } from "vscode";
-import { ChildProcess, spawn, SpawnOptions, exec } from "child_process";
-import * as path from "path";
+import { ChildProcess, spawn } from "child_process";
 import * as fs from "fs";
+import * as path from "path";
+import * as vscode from "vscode";
+import { getUI, UI } from "../common/ui";
 import {
-  ICommandResult,
-  ICommand,
-  IExecutionCommand,
   createDeferred,
-  IDefinitionResult,
-  CommandType
+  ICommand,
+  ICommandResult,
+  IExecutionCommand
 } from "./proxy";
-import { UI, getUI } from "../common/ui";
+import "../common/extensions";
 
-export class VdfProxy implements Disposable {
+export class VdfProxy implements vscode.Disposable {
   private proc?: ChildProcess;
   private workspacePath: string;
   private indexPath: string;
@@ -46,7 +45,7 @@ export class VdfProxy implements Disposable {
     let exePath = path.join(
       this.extensionRootDir,
       // TEMP: Final output will be in the resources folder
-      "src/server/VDFServer/VDFServer/bin/Release/netcoreapp2.1/VDFServer.dll"
+      "src/server/VDFServer/VDFServer/bin/Debug/netcoreapp2.1/VDFServer.dll"
     );
 
     return this.spawnProcess(exePath, this.workspacePath, this.indexPath).catch(
@@ -87,12 +86,29 @@ export class VdfProxy implements Disposable {
     });
 
     proc.stdout.on("data", stream => {
-      const response: string = stream.toString();
-      console.log("Response Data: ", response);
+      const data: string = stream.toString();
+      const processData: string = `${this.previousData}${data}`;
+      this.previousData = processData;
 
-      if (this.responseIsResult(response)) {
+      //console.log("Stream Data: ", data);
+      //console.log("Process Data: ", processData);
+
+      if (this.responseIsInternalMessage(processData)) {
+        this.handleInternalMessaging(processData);
+        this.previousData = "";
+      } else {
+        let results: ICommandResult[];
         try {
-          let result: ICommandResult = JSON.parse(response);
+          results = processData.splitLines().map(data => JSON.parse(data));
+          this.previousData = "";
+        } catch (ex) {
+          console.log("Error:", ex);
+          // Possible we've only received part of the data,
+          // don't clear previousData.
+          return;
+        }
+
+        results.forEach(result => {
           if (result.requestId != null && this.commands.has(result.requestId)) {
             const cmd = this.commands.get(result.requestId);
             if (cmd) {
@@ -110,7 +126,7 @@ export class VdfProxy implements Disposable {
               }
             }
           }
-        } catch {}
+        });
       }
 
       this.clearPendingRequests();
@@ -131,21 +147,34 @@ export class VdfProxy implements Disposable {
     });
   }
 
-  private responseIsResult(response: string): boolean {
+  private responseIsInternalMessage(response: string): boolean {
     if (
-      response === "TAG_NOT_FOUND" ||
-      response === "NO_PROVIDER_FOUND" ||
-      response === "LANGUAGE_SERVER_INDEXING"
+      response.startsWith("TAG_NOT_FOUND") ||
+      response.startsWith("NO_PROVIDER_FOUND") ||
+      response.startsWith("LANGUAGE_SERVER_INDEXING") ||
+      response.startsWith("LANGUAGE_SERVER_INDEXING_COMPLETE")
     )
-      return false;
+      return true;
 
-    if (response === "LANGUAGE_SERVER_INDEXING_COMPLETE") {
+    return false;
+  }
+
+  private handleInternalMessaging(response: string) {
+    if (response.startsWith("LANGUAGE_SERVER_INDEXING_COMPLETE")) {
       this.ui.IsUpdatingIndex = false;
-      console.log(response);
-      return false;
+      const timeBreakPos = response.indexOf("-");
+      if (timeBreakPos !== -1) {
+        const time = response.substring(timeBreakPos).trim();
+        vscode.window.setStatusBarMessage(
+          `VDF Language Server Indexing Completed: Processing Time ${time} seconds`,
+          10000
+        );
+      }
+    } else if (response.startsWith("LANGUAGE_SERVER_INDEXING")) {
+      vscode.window.showInformationMessage(
+        "VDF Language Server is currently indexing files. Please try again when indexing has been completed."
+      );
     }
-
-    return true;
   }
 
   private killProcess() {

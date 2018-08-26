@@ -43,8 +43,6 @@ export class VdfDefinitionProvider implements vscode.DefinitionProvider {
       .getVdfProxyHandler<IDefinitionResult>(document.uri)
       .sendCommand(cmd, token)
       .then(result => {
-        console.log(result);
-
         if (result) {
           const locations = result.definitions.map(def => {
             const uri = vscode.Uri.file(def.filePath);
