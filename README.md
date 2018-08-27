@@ -1,10 +1,11 @@
 # VDF support for Visual Studio Code
 
 Adds language support for VDF to Visual Studio Code.
+
 Supports:
 
 - code completion
-- jump to definition, peek definition,
+- jump to definition, peek definition
 - code formatting
 - snippets
 - syntax highlighting
@@ -17,7 +18,7 @@ Supports:
 - symbol search
 - build tasks
 - refactoring (rename, extract to method)
-- Lots of more...
+- Lots more...
 
 ## Known issues
 
