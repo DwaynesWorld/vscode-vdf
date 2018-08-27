@@ -12,6 +12,7 @@ namespace VDFServer
     {
         private static string _indexPath;
         private static string _workspaceRootPath;
+
         static void Main(string[] args)
         {
             HandleArguments(args);

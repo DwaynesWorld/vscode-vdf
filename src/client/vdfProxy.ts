@@ -44,9 +44,9 @@ export class VdfProxy implements vscode.Disposable {
   private initialize(): Promise<void> {
     let exePath = path.join(
       this.extensionRootDir,
-      "resources/VDFServer.dll"
+      //"resources/VDFServer.dll"
       // TEMP: Final output will be in the resources folder
-      //"src/server/VDFServer/VDFServer/bin/Debug/netcoreapp2.1/VDFServer.dll"
+      "src/server/VDFServer/VDFServer/bin/Debug/netcoreapp2.1/VDFServer.dll"
     );
 
     return this.spawnProcess(exePath, this.workspacePath, this.indexPath).catch(
