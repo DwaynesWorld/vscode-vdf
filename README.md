@@ -22,4 +22,4 @@ Supports:
 
 ## Known issues
 
-- regex needs some help, does not find methods with array brackets correctly
+- regex needs some help, does not find methods with array brackets in declaration correctly

@@ -4,6 +4,10 @@
   "description": "Adds language support for VDF to Visual Studio Code.",
   "version": "0.2.0",
   "publisher": "kdt",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DwaynesWorld/vscode-vdf.git"
+  },
   "icon": "DF_Logo.png",
   "engines": {
     "vscode": "^1.5.0"
@@ -70,9 +74,15 @@
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "compile": "tsc -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test"
+    "test": "node ./node_modules/vscode/bin/test",
+    "build-ext": "tsc -p ./",
+    "build-deps-osx": "chmod +x ./publish.sh && ./publish.sh",
+    "build-deps-win": "./publish.cmd",
+    "build-osx": "npm run build-deps-osx && npm run build-ext",
+    "build-win": "npm run build-deps-win && npm run build-ext",
+    "package-osx": "npm run build-osx && chmod +x ./package.sh && ./package.sh",
+    "package-win": "npm run build-win && ./package.cmd"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.3",
