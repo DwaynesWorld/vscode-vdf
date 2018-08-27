@@ -12,6 +12,7 @@ Supports:
 
 ## TODO
 
+- Get Unit Testing and Travis CI setup
 - error squiggles and apply suggestions from errors
 - types and documentation on hover
 - find all references
