@@ -1,7 +1,9 @@
 out
 node_modules
 
-!resources/
+resources/
+!resources/VDFEdit.dll
+!resources/VDFSource.exe
 
 #Sqlite
 *.db
@@ -341,3 +343,5 @@ ASALocalRun/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+*.vsix

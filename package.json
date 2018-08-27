@@ -1,9 +1,9 @@
 {
   "name": "vls",
   "displayName": "VDF Language Server",
-  "description": "Visual Dataflex Goodies",
-  "version": "0.1.0",
-  "publisher": "kt",
+  "description": "Adds language support for VDF to Visual Studio Code.",
+  "version": "0.2.0",
+  "publisher": "kdt",
   "icon": "DF_Logo.png",
   "engines": {
     "vscode": "^1.5.0"
