@@ -1,9 +1,18 @@
-language: node_js
-node_js:
-  - "lts/*"
-install:
-  - yarn
-before_script:
-  - yarn build-osx
-script:
-  - yarn test
+matrix:
+  include:
+    - language: node_js
+      node_js: "lts/*"
+      install:
+        - yarn
+      before_script:
+        - yarn build-ext
+      script:
+        - yarn test
+  inlude:
+    language: csharp
+    mono: none
+    dotnet: 2.1.302
+    install:
+      - dotnet restore
+    script:
+      - dotnet build src/server/VDFServer/VDFServer/VDFServer.csproj
