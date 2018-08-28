@@ -7,6 +7,7 @@ import { vdfOnDidSaveTextDocument } from "./providers/documentEventHandlers";
 import { IndentVdfCommand } from "./providers/vscodeCommands";
 import { VdfProxyFactory } from "./client/vdfProxyFactory";
 import { VdfDefinitionProvider } from "./providers/definitionProvider";
+import { setGlobalContext } from "./common/util";
 
 const VDF_LANGUAGE = "vdf";
 const VDF = [
@@ -18,6 +19,8 @@ let vdfProxyFactory: VdfProxyFactory;
 let ui: UI;
 
 export function activate(context: vscode.ExtensionContext) {
+	setGlobalContext(context);
+
 	vscode.window.setStatusBarMessage(
 		"VDF Language Server is now active!",
 		2000
