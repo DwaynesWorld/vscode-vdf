@@ -75,7 +75,7 @@
     "vscode:prepublish": "",
     "watch": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test",
+    "test": "mocha \"./out/test/*.logic.test.js\"",
     "build-ext": "tsc -p ./",
     "build-deps-osx": "rm -rf resources/server && cd src/server/VDFServer/VDFServer && dotnet publish --configuration Release --runtime osx-x64 --self-contained --output \"../../../../resources/server\"",
     "build-deps-win": "if exist ./resources/server del ./resources/server && cd src/server/VDFServer/VDFServer && dotnet publish --configuration Release --runtime win-x64 --self-contained --output \"../../../../resources/server\"",
