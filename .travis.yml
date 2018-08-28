@@ -1,21 +1,13 @@
-jobs:
-  include:
-    - stage: node
-    - language: node_js
-      node_js: 
-        - "lts/*"
-      install:
-        - yarn
-      before_script:
-        - yarn build-ext
-      script:
-        - yarn test
-  include:
-    - stage: dotnet
-    - language: csharp
-      mono: none
-      dotnet: 2.1.302
-      install:
-        - dotnet restore src/server/VDFServer/VDFServer/VDFServer.csproj
-      script:
-        - dotnet build src/server/VDFServer/VDFServer/VDFServer.csproj
+language: csharp
+mono: none
+dotnet: 2.1.302
+install:
+  - nvm install 8.11.3
+  - nvm use 8.11.3
+  - yarn
+  - dotnet restore src/server/VDFServer/VDFServer/VDFServer.csproj
+before_script:
+  - yarn build-ext
+script:
+  - yarn test
+  - dotnet build src/server/VDFServer/VDFServer/VDFServer.csproj
