@@ -13,6 +13,6 @@ matrix:
     mono: none
     dotnet: 2.1.302
     install:
-      - dotnet restore
+      - dotnet restore src/server/VDFServer/VDFServer/VDFServer.csproj
     script:
       - dotnet build src/server/VDFServer/VDFServer/VDFServer.csproj
