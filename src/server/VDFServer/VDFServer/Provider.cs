@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using VDFServer.Data;
+using VDFServer.Data.Enumerations;
 using VDFServer.Models;
 using VDFServer.Parser;
 
@@ -62,7 +63,7 @@ namespace VDFServer
                     _ctx.Database.EnsureDeleted();
                     _ctx.Database.EnsureCreated();
                     version = new IndexVersion { Version = ApplicationDbContext.CurrentVersion };
-                    _ctx.IndexVersion.Add(version);
+                    _ctx.IndexVersion.Update(version);
                     _ctx.SaveChanges();
                 }
             }
@@ -84,12 +85,14 @@ namespace VDFServer
 
                 DoneIndexing = true;
                 Console.WriteLine($"{LANGUAGE_SERVER_INDEXING_COMPLETE} - {watch.ElapsedMilliseconds / 1000}");
+
+                _parser.Clean();
             });
         }
 
         public string Provide(string incomingPayload)
         {
-            // TODO: This needs alot of cleanup 
+            // TODO: This needs alot of cleanup
             // and extending to handle multiple request types
             if (!DoneIndexing)
                 return LANGUAGE_SERVER_INDEXING;
@@ -97,7 +100,7 @@ namespace VDFServer
             var request = JsonConvert.DeserializeObject<Request>(incomingPayload);
             switch (request.Lookup)
             {
-                case "4":
+                case CommandType.Definitions:
                     var results = ProvideDefinition(request);
                     if (results == null)
                         return TAG_NOT_FOUND;

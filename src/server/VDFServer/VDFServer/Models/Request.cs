@@ -1,10 +1,12 @@
+using VDFServer.Data.Enumerations;
+
 namespace VDFServer.Models
 {
     public class Request
     {
         public int Id { get; set; }
         public string Prefix { get; set; }
-        public string Lookup { get; set; }
+        public CommandType Lookup { get; set; }
         public string PossibleWord { get; set; }
         public string Path { get; set; }
         public string Source { get; set; }

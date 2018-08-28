@@ -15,7 +15,9 @@ namespace VDFServer
 
         static void Main(string[] args)
         {
+            WaitForDebugger();
             HandleArguments(args);
+
             var provider = new Provider(_indexPath, _workspaceRootPath);
 
             int length;
@@ -51,6 +53,13 @@ namespace VDFServer
                 throw new ApplicationException($"Unable to create required directory: {_indexPath}");
             if (!Directory.Exists(_workspaceRootPath))
                 throw new ApplicationException($"Unable to locate workspace root folder: {_workspaceRootPath}");
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        private static void WaitForDebugger()
+        {
+            System.Diagnostics.Debug.WriteLine("Attach to Debugger");
+            System.Threading.Thread.Sleep(15000);
         }
     }
 }

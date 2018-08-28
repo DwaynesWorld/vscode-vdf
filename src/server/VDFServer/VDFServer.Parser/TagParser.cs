@@ -8,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using VDFServer.Data;
 using VDFServer.Data.Enumerations;
 using VDFServer.Data.Models;
+using VDFServer.Parser.Service;
 
 namespace VDFServer.Parser
 {
     public class TagParser
     {
         private ApplicationDbContext _ctx;
+        private InternalParser _parser;
         private string _workspaceRootFolder;
         private string[] _vdfExtensions = { ".VW", ".RV", ".SL", ".DG", ".SRC", ".DD", ".PKG", ".MOD", ".CLS", ".CLS", ".BPO", ".RPT", ".MNU", ".CAL", ".CON" };
         private string[] _methodSkiplist = { "SET", "ONCLICK", "ACTIVATE", "ACTIVATING" };
@@ -22,6 +24,7 @@ namespace VDFServer.Parser
         {
             _ctx = ctx;
             _workspaceRootFolder = workspaceRootFolder;
+            _parser = new InternalParser(_methodSkiplist);
         }
 
         public void Run(bool reindex)
@@ -29,19 +32,31 @@ namespace VDFServer.Parser
             BuildIndex(reindex);
         }
 
-        private void BuildIndex(bool reindex)
+        public async void Clean()
         {
             var filePaths = Directory
-                 .EnumerateFiles(_workspaceRootFolder, "*", SearchOption.AllDirectories)
-                 .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper()));
+                .EnumerateFiles(_workspaceRootFolder, "*", SearchOption.AllDirectories)
+                .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper()));
+
+            if (await _ctx.SourceFiles.CountAsync() != filePaths.Count())
+                CleanupIndex();
+        }
+
+        private async void BuildIndex(bool reindex)
+        {
+            var filePaths = Directory
+                .EnumerateFiles(_workspaceRootFolder, "*", SearchOption.AllDirectories)
+                .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper()));
+
+            var count = filePaths.Count();
 
             foreach (var path in filePaths)
             {
                 var fileInfo = new FileInfo(path);
-                var sourceFile = _ctx.SourceFiles
+                var sourceFile = await _ctx.SourceFiles
                     .Include(s => s.Tags)
                     .Where(src => src.FilePath.ToUpper() == path.ToUpper())
-                    .SingleOrDefault();
+                    .SingleOrDefaultAsync();
 
                 if (sourceFile != null)
                 {
@@ -52,7 +67,7 @@ namespace VDFServer.Parser
                         else
                             _ctx.Tags.RemoveRange(sourceFile.Tags);
 
-                        var tags = ParseFile(path, sourceFile.Id);
+                        var tags = _parser.ParseFile(path);
                         sourceFile.Tags.AddRange(tags);
                         sourceFile.LastWriteTime = fileInfo.LastWriteTime;
                         sourceFile.LastUpdated = DateTime.Now;
@@ -66,7 +81,7 @@ namespace VDFServer.Parser
                     if (sourceFile.Tags == null)
                         sourceFile.Tags = new List<Tag>();
 
-                    var tags = ParseFile(path, sourceFile.Id);
+                    var tags = _parser.ParseFile(path);
                     sourceFile.Tags.AddRange(tags);
                     sourceFile.FilePath = path;
                     sourceFile.FileName = fileInfo.Name;
@@ -76,125 +91,17 @@ namespace VDFServer.Parser
                 }
             }
 
-            _ctx.SaveChanges();
+            await _ctx.SaveChangesAsync();
         }
 
-        private List<Tag> ParseFile(string filePath, string fileId)
+        private async void CleanupIndex()
         {
-            var tags = new List<Tag>();
-            var lines = File.ReadAllLines(filePath);
-
-            for (int i = 0; i < lines.Length; i++)
+            await _ctx.SourceFiles.ForEachAsync(s =>
             {
-                var originalLine = lines[i];
-                var line = lines[i].Trim();
-                var commentPos = line.IndexOf("//");
-                if (commentPos != -1)
-                    line = line.Remove(commentPos);
-
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var tag = ParseLine(line, originalLine);
-
-                if (tag == null)
-                    continue;
-
-                tag.Line = i;
-                tags.Add(tag);
-            }
-
-            return tags;
-        }
-
-        private Tag ParseLine(string line, string originalLine)
-        {
-            if (Regex.IsMatch(line, Language.FUNCTION_PATTERN, RegexOptions.IgnoreCase))
-                return ParseFunctionDeclaration(line, originalLine);
-            else if (Regex.IsMatch(line, Language.PROCEDURE_PATTERN, RegexOptions.IgnoreCase))
-                return ParseProcedureDeclaration(line, originalLine);
-            else if (Regex.IsMatch(line, Language.OBJECT_PATTERN, RegexOptions.IgnoreCase))
-                return ParseClassObjectDeclaration(line, originalLine, false);
-            else if (Regex.IsMatch(line, Language.CLASS_PATTERN, RegexOptions.IgnoreCase))
-                return ParseClassObjectDeclaration(line, originalLine, true);
-            else if (Regex.IsMatch(line, Language.STRUCT_PATTERN, RegexOptions.IgnoreCase))
-                return ParseStructDeclaration(line, originalLine);
-
-            return null;
-        }
-
-        private Tag ParseClassObjectDeclaration(string line, string originalLine, bool isClass)
-        {
-            var nameMatch = Regex.Match(line, Language.CLASS_OBJECT_NAME_PATTERN, RegexOptions.IgnoreCase);
-            if (nameMatch.Value != null)
-            {
-                var tag = new Tag();
-                tag.Name = nameMatch.Value;
-
-                tag.Type = isClass ? TagType.Class : TagType.Object;
-                tag.StartColumn = originalLine.IndexOf(tag.Name);
-                tag.EndColumn = tag.StartColumn + tag.Name.Length;
-                return tag;
-            }
-
-            return null;
-        }
-
-        private Tag ParseProcedureDeclaration(string line, string originalLine)
-        {
-            var nameMatch = Regex.Match(line, Language.PROCEDURE_NAME_PATTERN, RegexOptions.IgnoreCase);
-            if (nameMatch.Groups.Count > 1)
-            {
-                var tag = new Tag();
-                tag.Name = nameMatch.Groups[1].Value;
-
-                if (_methodSkiplist.Contains(tag.Name.ToUpper()))
-                    return null;
-
-                tag.Type = TagType.Procedure;
-                tag.StartColumn = originalLine.IndexOf(tag.Name);
-                tag.EndColumn = tag.StartColumn + tag.Name.Length;
-                return tag;
-            }
-
-            return null;
-        }
-
-        private Tag ParseFunctionDeclaration(string line, string originalLine)
-        {
-            var nameMatch = Regex.Match(line, Language.FUNCTION_NAME_PATTERN, RegexOptions.IgnoreCase);
-            if (nameMatch.Groups.Count > 1)
-            {
-                var tag = new Tag();
-                tag.Name = nameMatch.Groups[1].Value;
-
-                if (_methodSkiplist.Contains(tag.Name.ToUpper()))
-                    return null;
-
-                tag.Type = TagType.Function;
-                tag.StartColumn = originalLine.IndexOf(tag.Name);
-                tag.EndColumn = tag.StartColumn + tag.Name.Length;
-                return tag;
-            }
-
-            return null;
-        }
-
-        private Tag ParseStructDeclaration(string line, string originalLine)
-        {
-            var nameMatch = Regex.Match(line, Language.STRUCT_NAME_PATTERN, RegexOptions.IgnoreCase);
-            if (nameMatch.Groups.Count > 1)
-            {
-                var tag = new Tag();
-                tag.Name = nameMatch.Groups[1].Value;
-
-                tag.Type = TagType.Struct;
-                tag.StartColumn = originalLine.IndexOf(tag.Name);
-                tag.EndColumn = tag.StartColumn + tag.Name.Length;
-                return tag;
-            }
-
-            return null;
+                if (!File.Exists(s.FilePath))
+                    _ctx.Remove(s);
+            });
+            await _ctx.SaveChangesAsync();
         }
     }
 }

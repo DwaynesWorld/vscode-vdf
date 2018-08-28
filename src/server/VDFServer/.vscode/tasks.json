@@ -1,15 +1,43 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/VDFServer/VDFServer.csproj"
-            ],
-            "problemMatcher": "$msCompile"
-        }
-    ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build sln",
+			"command": "dotnet",
+			"type": "process",
+			"args": ["build"],
+			"problemMatcher": "$msCompile",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "build server",
+			"command": "dotnet",
+			"type": "process",
+			"args": ["build", "${workspaceFolder}/VDFServer/VDFServer.csproj"],
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "build test",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"${workspaceFolder}/VDFServer.Tests/VDFServer.Tests.csproj"
+			],
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "run test",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"test",
+				"${workspaceFolder}/VDFServer.Tests/VDFServer.Tests.csproj"
+			],
+			"problemMatcher": "$msCompile"
+		}
+	]
 }
