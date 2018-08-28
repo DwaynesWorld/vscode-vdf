@@ -7,8 +7,8 @@ matrix:
       before_script:
         - yarn build-ext
       script:
-        - yarn test --silent
-  inlude:
+        - yarn test
+  include:
     language: csharp
     mono: none
     dotnet: 2.1.302
