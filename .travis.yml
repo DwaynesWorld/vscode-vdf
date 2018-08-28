@@ -14,9 +14,6 @@ matrix:
       mono: none
       dotnet: 2.1.302
       install:
-        - yarn
-        - yarn build-ext
         - dotnet restore src/server/VDFServer/VDFServer/VDFServer.csproj
       script:
-        - yarn test
         - dotnet build src/server/VDFServer/VDFServer/VDFServer.csproj
