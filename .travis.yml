@@ -1,5 +1,6 @@
-matrix:
+jobs:
   include:
+    - stage: node
     - language: node_js
       node_js: 
         - "lts/*"
@@ -10,6 +11,7 @@ matrix:
       script:
         - yarn test
   include:
+    - stage: dotnet
     - language: csharp
       mono: none
       dotnet: 2.1.302
