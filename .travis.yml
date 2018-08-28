@@ -1,6 +1,6 @@
 matrix:
   include:
-      language: node_js
+    - language: node_js
       node_js: "lts/*"
       install:
         - yarn
@@ -9,10 +9,10 @@ matrix:
       script:
         - yarn test
   include:
-    language: csharp
-    mono: none
-    dotnet: 2.1.302
-    install:
-      - dotnet restore src/server/VDFServer/VDFServer/VDFServer.csproj
-    script:
-      - dotnet build src/server/VDFServer/VDFServer/VDFServer.csproj
+    - language: csharp
+      mono: none
+      dotnet: 2.1.302
+      install:
+        - dotnet restore src/server/VDFServer/VDFServer/VDFServer.csproj
+      script:
+        - dotnet build src/server/VDFServer/VDFServer/VDFServer.csproj
