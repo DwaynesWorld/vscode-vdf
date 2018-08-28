@@ -1,4 +1,4 @@
-# VDF support for Visual Studio Code
+# VDF support for Visual Studio Code [![Build Status](https://travis-ci.com/DwaynesWorld/vscode-vdf.svg?branch=master)](https://travis-ci.com/DwaynesWorld/vscode-vdf)
 
 Adds language support for VDF to Visual Studio Code.
 
