@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "lts/*"
+install:
+  - yarn
+before_script:
+  - yarn build-osx
+script:
+  - yarn test
