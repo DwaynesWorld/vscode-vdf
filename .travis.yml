@@ -2,12 +2,13 @@ language: csharp
 mono: none
 dotnet: 2.1.302
 install:
-  - nvm install 8.11.3
-  - nvm use 8.11.3
-  - yarn
-  - dotnet restore src/server/VDFServer/VDFServer/VDFServer.csproj
+    - nvm install 8.11.3
+    - nvm use 8.11.3
+    - yarn
+    - dotnet restore src/server/VDFServer/
 before_script:
-  - yarn build-ext
+    - yarn build-ext
+    - dotnet build src/server/VDFServer/
 script:
-  - yarn test
-  - dotnet build src/server/VDFServer/VDFServer/VDFServer.csproj
+    - yarn test
+    - dotnet test src/server/VDFServer/VDFServer.Tests/VDFServer.Tests.csproj
