@@ -62,6 +62,14 @@ namespace VDFServer.Tests
         }
 
         [Fact]
+        public void ReturnFunctionTypeFromFunctionDeclarationLineWithArrayParams()
+        {
+            var line = "Function BiditemIndex String sBid tBid[] ByRef BidData Returns Integer";
+            var tag = _parserService.ParseLine(line, line);
+            Assert.Equal(TagType.Function, tag.Type);
+        }
+
+        [Fact]
         public void ReturnStructTypeFromStructDeclarationLine()
         {
             var line = "Struct tProductions";
