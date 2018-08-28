@@ -7,7 +7,7 @@ matrix:
       before_script:
         - yarn build-ext
       script:
-        - yarn test
+        - yarn test --silent
   inlude:
     language: csharp
     mono: none
