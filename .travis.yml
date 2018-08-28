@@ -1,6 +1,6 @@
 matrix:
   include:
-    - language: node_js
+      language: node_js
       node_js: "lts/*"
       install:
         - yarn
