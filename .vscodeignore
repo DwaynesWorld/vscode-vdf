@@ -9,13 +9,7 @@ typings/**
 **/*.ts
 **/*.map
 
-package.sh
-publish.sh
-install.sh
-package.cmd
-publish.cmd
-install.cmd
-
+.travis.yml
 .gitignore
 tsconfig.json
 vsc-extension-quickstart.md

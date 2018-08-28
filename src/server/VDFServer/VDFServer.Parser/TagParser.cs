@@ -48,8 +48,6 @@ namespace VDFServer.Parser
                 .EnumerateFiles(_workspaceRootFolder, "*", SearchOption.AllDirectories)
                 .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper()));
 
-            var count = filePaths.Count();
-
             foreach (var path in filePaths)
             {
                 var fileInfo = new FileInfo(path);

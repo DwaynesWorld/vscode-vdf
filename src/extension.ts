@@ -10,40 +10,43 @@ import { VdfDefinitionProvider } from "./providers/definitionProvider";
 
 const VDF_LANGUAGE = "vdf";
 const VDF = [
-  { scheme: "file", language: VDF_LANGUAGE },
-  { scheme: "untitled", language: VDF_LANGUAGE }
+	{ scheme: "file", language: VDF_LANGUAGE },
+	{ scheme: "untitled", language: VDF_LANGUAGE }
 ];
 
 let vdfProxyFactory: VdfProxyFactory;
 let ui: UI;
 
 export function activate(context: vscode.ExtensionContext) {
-  vscode.window.setStatusBarMessage("VDF Language Server is now active!", 2000);
+	vscode.window.setStatusBarMessage(
+		"VDF Language Server is now active!",
+		2000
+	);
 
-  // Create UI
-  ui = getUI();
+	// Create UI
+	ui = getUI();
 
-  // Extension
-  vdfProxyFactory = new VdfProxyFactory(context.extensionPath);
-  context.subscriptions.push(vdfProxyFactory);
+	// Extension
+	vdfProxyFactory = new VdfProxyFactory(context.extensionPath);
+	context.subscriptions.push(vdfProxyFactory);
 
-  //Register User commands
-  context.subscriptions.push(IndentVdfCommand);
+	//Register User commands
+	context.subscriptions.push(IndentVdfCommand);
 
-  //Register providers
-  context.subscriptions.push(
-    vscode.languages.registerDefinitionProvider(
-      VDF,
-      new VdfDefinitionProvider(vdfProxyFactory)
-    )
-  );
+	//Register providers
+	context.subscriptions.push(
+		vscode.languages.registerDefinitionProvider(
+			VDF,
+			new VdfDefinitionProvider(vdfProxyFactory)
+		)
+	);
 
-  //Handle Document Events
-  vscode.workspace.onDidSaveTextDocument(
-    vdfOnDidSaveTextDocument,
-    null,
-    context.subscriptions
-  );
+	//Handle Document Events
+	vscode.workspace.onDidSaveTextDocument(
+		vdfOnDidSaveTextDocument,
+		null,
+		context.subscriptions
+	);
 }
 
 export function deactivate() {}
