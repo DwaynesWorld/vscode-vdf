@@ -55,7 +55,7 @@ $ yarn package-win
 $ yarn package-osx
 ```
 
-Install extension locally
+Install extension locally (after running yarn and yarn package~)
 
 ```sh
 $ yarn install-ext
