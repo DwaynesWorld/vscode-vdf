@@ -24,3 +24,39 @@ Supports:
 ## Known issues
 
 - ~~regex needs some help, does not find methods with array brackets in declaration correctly~~
+
+## Contributing
+
+### Get Started
+
+Install the dependencies and devDependencies.
+
+```sh
+$ yarn
+```
+
+Build for debugging
+
+```sh
+$ yarn build
+```
+
+Or Build for Release
+
+(Windows)
+
+```sh
+$ yarn package-win
+```
+
+(OSX)
+
+```sh
+$ yarn package-osx
+```
+
+Install extension locally
+
+```sh
+$ yarn install-ext
+```

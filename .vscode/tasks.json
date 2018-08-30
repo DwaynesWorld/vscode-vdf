@@ -2,27 +2,12 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build Extension",
-      "command": "npm",
+      "label": "build",
+      "command": "yarn",
       "isBackground": true,
       "type": "shell",
-      "args": ["run", "compile", "--loglevel", "silent"],
+      "args": ["run", "build"],
       "problemMatcher": "$tsc-watch"
-    },
-    {
-      "label": "build VDF Lexer",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "build",
-        "${workspaceFolder}/resources/vdflexer/vdfLexer.csproj"
-      ],
-      "problemMatcher": "$msCompile"
-    },
-    {
-      "type": "npm",
-      "script": "compile",
-      "problemMatcher": []
     }
   ]
 }

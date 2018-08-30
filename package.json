@@ -1,96 +1,101 @@
 {
-	"name": "vls",
-	"displayName": "VDF Language Server",
-	"description": "Adds language support for VDF to Visual Studio Code.",
-	"version": "0.2.0",
-	"publisher": "kdt",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/DwaynesWorld/vscode-vdf.git"
-	},
-	"icon": "DF_Logo.png",
-	"engines": {
-		"vscode": "^1.5.0"
-	},
-	"categories": [
-		"Programming Languages",
-		"Snippets",
-		"Other"
-	],
-	"activationEvents": [
-		"onLanguage:vdf",
-		"onCommand:extension.IndentVDF"
-	],
-	"main": "./out/src/extension",
-	"contributes": {
-		"commands": [
-			{
-				"command": "extension.IndentVDF",
-				"title": "VDF Indent"
-			}
-		],
-		"languages": [
-			{
-				"id": "vdf",
-				"aliases": [
-					"VDF",
-					"vdf",
-					"Vdf"
-				],
-				"extensions": [
-					".vw",
-					".rv",
-					".sl",
-					".dg",
-					".src",
-					".dd",
-					".pkg",
-					".mod",
-					".cls",
-					".CLS",
-					".bpo",
-					".rpt",
-					".mnu",
-					".cal",
-					".con"
-				],
-				"configuration": "./language-configuration.json"
-			}
-		],
-		"grammars": [
-			{
-				"language": "vdf",
-				"scopeName": "source.vdf",
-				"path": "./syntaxes/VDF.tmLanguage"
-			}
-		],
-		"snippets": [
-			{
-				"language": "vdf",
-				"path": "./snippets/snippets.json"
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "",
-		"watch": "tsc -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "mocha \"./out/test/*.logic.test.js\"",
-		"build-ext": "tsc -p ./",
-		"build-deps-osx": "del-cli resources/server && cd src/server/VDFServer/VDFServer && dotnet publish --configuration Release --runtime osx-x64 --self-contained --output \"../../../../resources/server\"",
-		"build-deps-win": "del-cli resources/server && cd src/server/VDFServer/VDFServer && dotnet publish --configuration Release --runtime win-x64 --self-contained --output \"../../../../resources/server\"",
-		"build-osx": "npm run build-deps-osx && npm run build-ext",
-		"build-win": "npm run build-deps-win && npm run build-ext",
-		"package-osx": "npm run build-osx && npm install -g vsce && vsce package",
-		"package-win": "npm run build-win && npm install -g vsce && vsce package",
-		"install-ext": "code --install-extension vls-0.2.0.vsix"
-	},
-	"devDependencies": {
-		"@types/mocha": "^5.2.3",
-		"@types/node": "^10.3.4",
-		"mocha": "^5.2.0",
-		"typescript": "^2.0.3",
-		"vscode": "^1.1.18",
-		"del-cli": "^1.1.0"
-	}
+  "name": "vls",
+  "displayName": "VDF Language Server",
+  "description": "Adds language support for VDF to Visual Studio Code.",
+  "version": "0.2.0",
+  "publisher": "kdt",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DwaynesWorld/vscode-vdf.git"
+  },
+  "icon": "DF_Logo.png",
+  "engines": {
+    "vscode": "^1.5.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:vdf",
+    "onCommand:extension.IndentVDF"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.IndentVDF",
+        "title": "VDF Indent"
+      }
+    ],
+    "languages": [
+      {
+        "id": "vdf",
+        "aliases": [
+          "VDF",
+          "vdf",
+          "Vdf"
+        ],
+        "extensions": [
+          ".vw",
+          ".rv",
+          ".sl",
+          ".dg",
+          ".src",
+          ".dd",
+          ".pkg",
+          ".mod",
+          ".cls",
+          ".CLS",
+          ".bpo",
+          ".rpt",
+          ".mnu",
+          ".cal",
+          ".con"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "vdf",
+        "scopeName": "source.vdf",
+        "path": "./syntaxes/VDF.tmLanguage"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "vdf",
+        "path": "./snippets/snippets.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "mocha \"./out/test/*.logic.test.js\"",
+    "clean-ext": "del-cli out/",
+    "clean-dev": "del-cli src/server/VDFServer/VDFServer/bin",
+    "clean-prod": "del-cli resources/server",
+    "build-ext": "tsc -p ./",
+    "build-deps": "cd src/server/VDFServer/VDFServer && dotnet build",
+    "build": "yarn build-deps && yarn build-ext",
+    "package-deps-osx": "yarn clean-prod && cd src/server/VDFServer/VDFServer && dotnet publish --configuration Release --runtime osx-x64 --self-contained --output \"../../../../resources/server\"",
+    "package-deps-win": "yarn clean-prod && cd src/server/VDFServer/VDFServer && dotnet publish --configuration Release --runtime win-x64 --self-contained --output \"../../../../resources/server\"",
+    "package-osx": "yarn clean-ext && yarn build-ext && yarn package-deps-osx && yarn add vsce && vsce package",
+    "package-win": "yarn clean-ext && yarn build-ext && yarn package-deps-win && yarn add vsce && vsce package",
+    "install-ext": "code --install-extension vls-0.2.0.vsix"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.3",
+    "@types/node": "^10.3.4",
+    "del-cli": "^1.1.0",
+    "mocha": "^5.2.0",
+    "typescript": "^2.0.3",
+    "vsce": "^1.46.0",
+    "vscode": "^1.1.18"
+  },
+  "dependencies": {}
 }
