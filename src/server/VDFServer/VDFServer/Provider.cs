@@ -97,7 +97,11 @@ namespace VDFServer
             if (!DoneIndexing)
                 return LANGUAGE_SERVER_INDEXING;
 
+            // We are not handling anything in a try/catch
+            // because we want the program to crash
+            // it will be handled by the parent process
             var request = JsonConvert.DeserializeObject<Request>(incomingPayload);
+
             switch (request.Lookup)
             {
                 case CommandType.Definitions:
