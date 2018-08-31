@@ -4,7 +4,7 @@ import * as path from "path";
 import { execFile } from "child_process";
 import { UI, getUI } from "./common/ui";
 import { vdfOnDidSaveTextDocument } from "./providers/documentEventHandlers";
-import { IndentVdfCommand } from "./providers/vscodeCommands";
+import { formatVdfCommand, restartVdfServer } from "./providers/vscodeCommands";
 import { VdfProxyFactory } from "./client/vdfProxyFactory";
 import { VdfDefinitionProvider } from "./providers/definitionProvider";
 import { setGlobalContext } from "./common/util";
@@ -31,7 +31,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vdfProxyFactory);
 
   //Register User commands
-  context.subscriptions.push(IndentVdfCommand);
+  context.subscriptions.push(formatVdfCommand);
+  context.subscriptions.push(restartVdfServer);
 
   //Register providers
   context.subscriptions.push(vscode.languages.registerDefinitionProvider(VDF, new VdfDefinitionProvider(vdfProxyFactory)));
