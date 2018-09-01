@@ -1,6 +1,6 @@
-import * as vscode from "vscode";
-import * as path from "path";
-import { execFile } from "child_process";
+import * as path from 'path';
+import * as vscode from 'vscode';
+import { execFile } from 'child_process';
 
 let globalContext: vscode.ExtensionContext;
 

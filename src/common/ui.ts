@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
 let ui: UI;
 
@@ -6,7 +6,10 @@ export class UI {
   private indexStatusBarItem: vscode.StatusBarItem;
 
   constructor() {
-    this.indexStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1);
+    this.indexStatusBarItem = vscode.window.createStatusBarItem(
+      vscode.StatusBarAlignment.Right,
+      1
+    );
     this.indexStatusBarItem.text = "";
     this.indexStatusBarItem.tooltip = "Updating Index...";
     this.indexStatusBarItem.color = "Red";
@@ -32,7 +35,8 @@ export class UI {
 
   public activeDocumentChanged(): void {
     let activeEditor: vscode.TextEditor = vscode.window.activeTextEditor;
-    let isVdf: boolean = activeEditor && activeEditor.document.languageId === "vdf";
+    let isVdf: boolean =
+      activeEditor && activeEditor.document.languageId === "vdf";
     this.ShowFlameIcon = isVdf;
   }
 
