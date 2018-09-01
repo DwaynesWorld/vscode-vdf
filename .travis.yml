@@ -5,7 +5,6 @@ install:
   - nvm install 8.11.3
   - nvm use 8.11.3
   - yarn install --network-timeout 1000000
-  - yarn
   - dotnet restore src/server/VDFServer/
 before_script:
   - yarn build-ext
