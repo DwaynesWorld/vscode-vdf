@@ -1,4 +1,4 @@
-import { CancellationToken } from "vscode";
+import { CancellationToken } from 'vscode';
 
 export interface IDefinitionRange {
   startLine: number;
@@ -107,7 +107,8 @@ export function createDeferred<T>(scope: any = null): Deferred<T> {
   return new DeferredImpl<T>(scope);
 }
 
-export interface IExecutionCommand<T extends ICommandResult> extends ICommand<T> {
+export interface IExecutionCommand<T extends ICommandResult>
+  extends ICommand<T> {
   id: number;
   token: CancellationToken;
   deferred?: Deferred<T>;

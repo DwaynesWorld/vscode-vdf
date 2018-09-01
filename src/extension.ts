@@ -1,13 +1,14 @@
+import * as path from 'path';
+import * as vscode from 'vscode';
+import { execFile } from 'child_process';
+import { formatVdfCommand, restartVdfServer } from './providers/vscodeCommands';
+import { getUI, UI } from './common/ui';
+import { setGlobalContext } from './common/util';
+import { setVdfProxyService, VdfProxyService } from './client/vdfProxyFactory';
+import { VdfDefinitionProvider } from './providers/definitionProvider';
+import { vdfOnDidSaveTextDocument } from './providers/documentEventHandlers';
+
 "use strict";
-import * as vscode from "vscode";
-import * as path from "path";
-import { execFile } from "child_process";
-import { UI, getUI } from "./common/ui";
-import { vdfOnDidSaveTextDocument } from "./providers/documentEventHandlers";
-import { IndentVdfCommand } from "./providers/vscodeCommands";
-import { VdfProxyFactory } from "./client/vdfProxyFactory";
-import { VdfDefinitionProvider } from "./providers/definitionProvider";
-import { setGlobalContext } from "./common/util";
 
 const VDF_LANGUAGE = "vdf";
 const VDF = [
@@ -15,26 +16,21 @@ const VDF = [
   { scheme: "untitled", language: VDF_LANGUAGE }
 ];
 
-let vdfProxyFactory: VdfProxyFactory;
-let ui: UI;
-
 export function activate(context: vscode.ExtensionContext) {
-  setGlobalContext(context);
-
   vscode.window.setStatusBarMessage("VDF Language Server is now active!", 2000);
-
-  // Create UI
-  ui = getUI();
-
-  // Extension
-  vdfProxyFactory = new VdfProxyFactory(context.extensionPath);
-  context.subscriptions.push(vdfProxyFactory);
+  
+  // Extension Activation
+  const vdfProxyService = new VdfProxyService(context.extensionPath);
+  setGlobalContext(context);
+  setVdfProxyService(vdfProxyService);
+  context.subscriptions.push(vdfProxyService);
 
   //Register User commands
-  context.subscriptions.push(IndentVdfCommand);
+  context.subscriptions.push(formatVdfCommand);
+  context.subscriptions.push(restartVdfServer);
 
   //Register providers
-  context.subscriptions.push(vscode.languages.registerDefinitionProvider(VDF, new VdfDefinitionProvider(vdfProxyFactory)));
+  context.subscriptions.push(vscode.languages.registerDefinitionProvider(VDF, new VdfDefinitionProvider(vdfProxyService)));
 
   //Handle Document Events
   vscode.workspace.onDidSaveTextDocument(vdfOnDidSaveTextDocument, null, context.subscriptions);

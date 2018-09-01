@@ -19,14 +19,19 @@
   ],
   "activationEvents": [
     "onLanguage:vdf",
-    "onCommand:extension.IndentVDF"
+    "onCommand:extension.FormatVDF",
+    "onCommand:extension.RestartVdfServer"
   ],
   "main": "./out/src/extension",
   "contributes": {
     "commands": [
       {
-        "command": "extension.IndentVDF",
-        "title": "VDF Indent"
+        "command": "extension.FormatVDF",
+        "title": "Format Document"
+      },
+      {
+        "command": "extension.RestartVdfServer",
+        "title": "Restart VDF Server"
       }
     ],
     "languages": [

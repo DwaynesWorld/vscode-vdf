@@ -1,6 +1,17 @@
-import * as vscode from "vscode";
-import { runVdfIndentation } from "../common/util";
+import * as vscode from 'vscode';
+import { getGlobalContext, runVdfIndentation } from '../common/util';
+import { getVdfProxyService, setVdfProxyService, VdfProxyService } from '../client/vdfProxyFactory';
 
-export const IndentVdfCommand = vscode.commands.registerCommand("extension.IndentVDF", () => {
-  runVdfIndentation(vscode.window.activeTextEditor.document);
-});
+export const formatVdfCommand = vscode.commands.registerCommand(
+  "extension.FormatVDF",
+  () => {
+    runVdfIndentation(vscode.window.activeTextEditor.document);
+  }
+);
+
+export const restartVdfServer = vscode.commands.registerCommand(
+  "extension.RestartVdfServer",
+  () => {
+    getVdfProxyService().dispose();
+  }
+);
