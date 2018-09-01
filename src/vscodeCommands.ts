@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { getGlobalContext, runVdfIndentation } from '../common/util';
-import { getVdfProxyService, setVdfProxyService, VdfProxyService } from '../client/vdfProxyFactory';
+import { getGlobalContext, runVdfIndentation } from './common/util';
+import { getVdfProxyService, setVdfProxyService, VdfProxyService } from './client/vdfProxyFactory';
 
 export const formatVdfCommand = vscode.commands.registerCommand(
   "extension.FormatVDF",

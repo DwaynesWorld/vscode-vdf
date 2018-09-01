@@ -2180,7 +2180,7 @@ vsce@^1.46.0:
     yauzl "^2.3.1"
     yazl "^2.2.2"
 
-vscode@^1.1.18:
+vscode@^1.1.21:
   version "1.1.21"
   resolved "https://registry.yarnpkg.com/vscode/-/vscode-1.1.21.tgz#1c8253d6238aefb4112d6e58cf975ad25313dafc"
   dependencies:

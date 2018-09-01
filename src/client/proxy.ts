@@ -1,4 +1,4 @@
-import { CancellationToken } from 'vscode';
+import { CancellationToken, SymbolInformation, SymbolKind } from 'vscode';
 
 export interface IDefinitionRange {
   startLine: number;
@@ -11,6 +11,8 @@ export interface IDefinition {
   rawType: string;
   type: number;
   text: string;
+  kind: SymbolKind;
+  container: string;
   filePath: string;
   range: IDefinitionRange;
 }

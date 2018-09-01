@@ -100,7 +100,7 @@ export class VdfProxy implements vscode.Disposable {
       const processData: string = `${this.previousData}${data}`;
       this.previousData = processData;
 
-      //console.log("Stream Data: ", data);
+      console.log("Stream Data: ", data);
       //console.log("Process Data: ", processData);
 
       if (this.responseIsInternalMessage(processData)) {
@@ -139,7 +139,6 @@ export class VdfProxy implements vscode.Disposable {
         });
       }
 
-      this.clearPendingRequests();
       return;
     });
 
