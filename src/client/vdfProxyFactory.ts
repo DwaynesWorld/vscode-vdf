@@ -1,9 +1,23 @@
-import { Disposable, Uri, workspace } from "vscode";
-import { VdfProxyHandler } from "./vdfProxyHandler";
-import { VdfProxy } from "./vdfProxy";
-import { ICommandResult } from "./proxy";
+import { Disposable, Uri, workspace } from 'vscode';
+import { ICommandResult } from './proxy';
+import { VdfProxy } from './vdfProxy';
+import { VdfProxyHandler } from './vdfProxyHandler';
 
-export class VdfProxyFactory implements Disposable {
+let _vdfProxyService: VdfProxyService;
+
+export function setVdfProxyService(vdfProxyFactory: VdfProxyService) {
+  _vdfProxyService = vdfProxyFactory;
+}
+
+export function getVdfProxyService(): VdfProxyService {
+  if (_vdfProxyService === undefined) {
+    throw "VdfProxyFactory has not been initialized.";
+  }
+
+  return _vdfProxyService;
+}
+
+export class VdfProxyService implements Disposable {
   private vdfProxyHandler?: VdfProxyHandler<ICommandResult>;
 
   constructor(private extensionRootPath: string) {
@@ -11,11 +25,15 @@ export class VdfProxyFactory implements Disposable {
   }
 
   dispose() {
-    if (this.vdfProxyHandler) this.vdfProxyHandler.dispose();
+    if (this.vdfProxyHandler) {
+      this.vdfProxyHandler.dispose();
+    }
   }
 
   //TODO: Should be able to handle multiple workspaces.
-  public getVdfProxyHandler<T extends ICommandResult>(resource?: Uri): VdfProxyHandler<T> {
+  public getVdfProxyHandler<T extends ICommandResult>(
+    resource?: Uri
+  ): VdfProxyHandler<T> {
     if (!this.vdfProxyHandler) {
       const vdfProxy = new VdfProxy(this.extensionRootPath, workspace.rootPath);
       this.vdfProxyHandler = new VdfProxyHandler(vdfProxy);

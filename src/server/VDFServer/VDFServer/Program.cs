@@ -40,6 +40,7 @@ namespace VDFServer
         {
             if (args.Length < 1)
                 throw new ApplicationException("Required arguments missing: IndexPath, WorkspaceRootPath");
+
             if (args.Length < 2)
                 throw new ApplicationException("Required argument missing: WorkspaceRootPath");
 
@@ -51,6 +52,7 @@ namespace VDFServer
 
             if (!Directory.Exists(_indexPath))
                 throw new ApplicationException($"Unable to create required directory: {_indexPath}");
+
             if (!Directory.Exists(_workspaceRootPath))
                 throw new ApplicationException($"Unable to locate workspace root folder: {_workspaceRootPath}");
         }

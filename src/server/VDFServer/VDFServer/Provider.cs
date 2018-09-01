@@ -47,27 +47,8 @@ namespace VDFServer
                 .Options;
 
             _ctx = new ApplicationDbContext(options);
+            _ctx.Database.EnsureDeleted();
             _ctx.Database.EnsureCreated();
-
-            var version = _ctx.IndexVersion.SingleOrDefault();
-            if (version == null)
-            {
-                version = new IndexVersion { Version = ApplicationDbContext.CurrentVersion };
-                _ctx.IndexVersion.Add(version);
-                _ctx.SaveChanges();
-            }
-            else
-            {
-                if (version.Version < ApplicationDbContext.CurrentVersion)
-                {
-                    _ctx.Database.EnsureDeleted();
-                    _ctx.Database.EnsureCreated();
-                    version = new IndexVersion { Version = ApplicationDbContext.CurrentVersion };
-                    _ctx.IndexVersion.Update(version);
-                    _ctx.SaveChanges();
-                }
-            }
-
         }
 
         private void StartParser(string workspaceRootPath)

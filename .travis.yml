@@ -4,7 +4,8 @@ dotnet: 2.1.302
 install:
   - nvm install 8.11.3
   - nvm use 8.11.3
-  - yarn
+  - rm yarn.lock
+  - yarn install --network-timeout 300000
   - dotnet restore src/server/VDFServer/
 before_script:
   - yarn build-ext
@@ -12,3 +13,6 @@ before_script:
 script:
   - yarn test
   - dotnet test src/server/VDFServer/VDFServer.Tests/VDFServer.Tests.csproj
+branches:
+  only:
+    - master
