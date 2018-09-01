@@ -44,10 +44,6 @@ namespace VDFServer.Parser
 
         private async void BuildIndex(bool reindex)
         {
-            // var filePaths = Directory
-            //     .EnumerateFiles(_workspaceRootFolder, "*", SearchOption.AllDirectories)
-            //     .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper()));
-
             foreach (var path in Directory
                 .EnumerateFiles(_workspaceRootFolder, "*", SearchOption.AllDirectories)
                 .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper())))
