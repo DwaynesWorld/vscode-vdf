@@ -38,12 +38,12 @@ namespace VDFServer
 
                 foreach (var payload in payloads)
                 {
-                    if (payload.Trim().Length > 0)
+                    if (!string.IsNullOrWhiteSpace(payload))
                     {
                         Task.Run(() =>
                         {
                             var provider = new Provider(_options);
-                            Console.WriteLine(provider.Provide(payload));
+                            Console.WriteLine(provider.Provide(payload.Trim()));
                         });
                     }
                 }
