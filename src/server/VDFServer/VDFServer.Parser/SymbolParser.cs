@@ -14,20 +14,20 @@ using VDFServer.Parser.Service;
 
 namespace VDFServer.Parser
 {
-    public class SymbolParser : IDisposable
+    public class SymbolParser : ISymbolParser
     {
-        private ApplicationDbContext _ctx;
-        private InternalParser _parser;
         public static volatile bool DoneIndexing = false;
-        private string _workspaceRootFolder;
-        private string[] _vdfExtensions = { ".VW", ".RV", ".SL", ".DG", ".SRC", ".DD", ".PKG", ".MOD", ".CLS", ".CLS", ".BPO", ".RPT", ".MNU", ".CAL", ".CON" };
-        private string[] _methodSkiplist = { "SET", "ONCLICK", "ACTIVATE", "ACTIVATING" };
 
-        public SymbolParser(DbContextOptions<ApplicationDbContext> options, string workspaceRootFolder)
+        private readonly ApplicationDbContext _ctx;
+        private readonly IInternalParser _parser;
+        private readonly string[] _vdfExtensions = { ".VW", ".RV", ".SL", ".DG", ".SRC", ".DD", ".PKG", ".MOD", ".CLS", ".CLS", ".BPO", ".RPT", ".MNU", ".CAL", ".CON" };
+
+        public SymbolParser(
+            ApplicationDbContext ctx,
+            IInternalParser parser)
         {
-            _ctx = new ApplicationDbContext(options);
-            _workspaceRootFolder = workspaceRootFolder;
-            _parser = new InternalParser(_methodSkiplist);
+            _ctx = ctx;
+            _parser = parser;
         }
 
         public void Start()
@@ -51,7 +51,7 @@ namespace VDFServer.Parser
         public async void Clean()
         {
             var filePaths = Directory
-                .EnumerateFiles(_workspaceRootFolder, "*", SearchOption.AllDirectories)
+                .EnumerateFiles(ApplicationDbContext.WorkspaceRootFolder, "*", SearchOption.AllDirectories)
                 .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper()));
 
             if (await _ctx.SourceFiles.CountAsync() != filePaths.Count())
@@ -61,7 +61,7 @@ namespace VDFServer.Parser
         private async void BuildIndex(bool reindex = true)
         {
             foreach (var path in Directory
-                .EnumerateFiles(_workspaceRootFolder, "*", SearchOption.AllDirectories)
+                .EnumerateFiles(ApplicationDbContext.WorkspaceRootFolder, "*", SearchOption.AllDirectories)
                 .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper())))
             {
                 var fileInfo = new FileInfo(path);
@@ -114,15 +114,6 @@ namespace VDFServer.Parser
                     _ctx.Remove(s);
             });
             await _ctx.SaveChangesAsync();
-        }
-
-        public void Dispose()
-        {
-            if (_ctx != null)
-            {
-                _ctx.Dispose();
-                _ctx = null;
-            }
         }
     }
 }

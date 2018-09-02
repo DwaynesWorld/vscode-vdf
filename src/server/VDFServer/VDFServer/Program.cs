@@ -3,26 +3,37 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using VDFServer.Data;
 using VDFServer.Parser;
+using VDFServer.Parser.Service;
 
 namespace VDFServer
 {
     class Program
     {
-        private static string _indexPath;
-        private static string _workspaceRootPath;
-        private static DbContextOptions<ApplicationDbContext> _options;
-
         static void Main(string[] args)
         {
-            WaitForDebugger();
-            HandleArguments(args);
-            InitializeDatabase();
+            //WaitForDebugging();
+            (string indexPath, string workspaceRootFolder) = HandleArguments(args);
 
-            var parser = new SymbolParser(_options, _workspaceRootPath);
-            parser.Start();
+            ApplicationDbContext.WorkspaceRootFolder = workspaceRootFolder;
+            ApplicationDbContext.IndexPath = indexPath;
+            
+            // Setup Logging
+            GlobalServiceProvider.Instance
+                .ServiceProvider
+                .GetService<ILoggerFactory>()
+                .AddConsole(LogLevel.Debug);
+
+
+            // Start Parsing Workspace
+            GlobalServiceProvider.Instance
+                .ServiceProvider
+                .GetService<ISymbolParser>()
+                .Start();
 
             int length;
             var buffer = new byte[1024];
@@ -40,7 +51,10 @@ namespace VDFServer
                 {
                     Task.Run(() =>
                     {
-                        var provider = new Provider(_options);
+                        var provider = GlobalServiceProvider.Instance
+                            .ServiceProvider
+                            .GetService<IProvider>();
+
                         Console.WriteLine(provider.Provide(payload.Trim()));
                     });
                 }
@@ -49,7 +63,7 @@ namespace VDFServer
             }
         }
 
-        private static void HandleArguments(string[] args)
+        private static (string indexPath, string workspaceRootPath) HandleArguments(string[] args)
         {
             if (args.Length < 1)
                 throw new ApplicationException("Required arguments missing: IndexPath, WorkspaceRootPath");
@@ -57,38 +71,25 @@ namespace VDFServer
             if (args.Length < 2)
                 throw new ApplicationException("Required argument missing: WorkspaceRootPath");
 
-            _indexPath = args[0];
-            _workspaceRootPath = args[1];
+            var indexPath = args[0];
+            var workspaceRootPath = args[1];
 
-            if (!Directory.Exists(_indexPath))
-                Directory.CreateDirectory(_indexPath);
+            if (!Directory.Exists(indexPath))
+                Directory.CreateDirectory(indexPath);
 
-            if (!Directory.Exists(_indexPath))
-                throw new ApplicationException($"Unable to create required directory: {_indexPath}");
+            if (!Directory.Exists(indexPath))
+                throw new ApplicationException($"Unable to create required directory: {indexPath}");
 
-            if (!Directory.Exists(_workspaceRootPath))
-                throw new ApplicationException($"Unable to locate workspace root folder: {_workspaceRootPath}");
+            if (!Directory.Exists(workspaceRootPath))
+                throw new ApplicationException($"Unable to locate workspace root folder: {workspaceRootPath}");
+
+            return (indexPath, workspaceRootPath);
         }
 
-        private static void InitializeDatabase()
-        {
-            var indexFile = $"{Hasher.GetStringHash(_workspaceRootPath)}.db";
-            var indexFullName = Path.Combine(_indexPath, indexFile);
 
-            _options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseSqlite($"Data Source={indexFullName}")
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-                .Options;
-
-            using (var ctx = new ApplicationDbContext(_options))
-            {
-                ctx.Database.EnsureDeleted();
-                ctx.Database.EnsureCreated();
-            }
-        }
 
         [System.Diagnostics.Conditional("DEBUG")]
-        private static void WaitForDebugger()
+        private static void WaitForDebugging()
         {
             System.Threading.Thread.Sleep(15000);
         }

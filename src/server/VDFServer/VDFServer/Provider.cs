@@ -18,18 +18,21 @@ using VDFServer.Parser.Service;
 
 namespace VDFServer
 {
-    public class Provider : IDisposable
+    public class Provider : IProvider
     {
-        private ApplicationDbContext _ctx;
-
-        private static JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
+        private readonly ApplicationDbContext _ctx;
+        private readonly IInternalParser _internalParser;
+        private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
 
-        public Provider(DbContextOptions<ApplicationDbContext> options)
+        public Provider(
+            ApplicationDbContext ctx, 
+            IInternalParser internalParser)
         {
-            _ctx = new ApplicationDbContext(options);
+            _ctx = ctx;
+            _internalParser = internalParser;
         }
 
         public string Provide(string incomingPayload)
@@ -67,8 +70,7 @@ namespace VDFServer
         {
             if (request.Lookup == CommandType.Symbols)
             {
-                var parser = new InternalParser();
-                var symbols = parser.ParseFile(request.Path);
+                var symbols = _internalParser.ParseFile(request.Path);
                 return JsonConvert.SerializeObject(GetSymbolResults(request, symbols), _serializerSettings);
             }
             else
@@ -147,15 +149,6 @@ namespace VDFServer
             }
 
             return results;
-        }
-
-        public void Dispose()
-        {
-            if (_ctx != null)
-            {
-                _ctx.Dispose();
-                _ctx = null;
-            }
         }
     }
 }
