@@ -34,18 +34,15 @@ namespace VDFServer
                 var load = Encoding.UTF8.GetString(message);
 
                 System.Diagnostics.Debug.WriteLine(load);
-                var payloads = load.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                var payloads = load.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var payload in payloads)
                 {
-                    if (!string.IsNullOrWhiteSpace(payload))
+                    Task.Run(() =>
                     {
-                        Task.Run(() =>
-                        {
-                            var provider = new Provider(_options);
-                            Console.WriteLine(provider.Provide(payload.Trim()));
-                        });
-                    }
+                        var provider = new Provider(_options);
+                        Console.WriteLine(provider.Provide(payload.Trim()));
+                    });
                 }
 
                 Console.Out.Flush();
@@ -93,7 +90,7 @@ namespace VDFServer
         [System.Diagnostics.Conditional("DEBUG")]
         private static void WaitForDebugger()
         {
-            System.Threading.Thread.Sleep(10000);
+            System.Threading.Thread.Sleep(15000);
         }
     }
 }

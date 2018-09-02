@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
-import { CommandType, ICommand, IDefinitionResult } from '../client/proxy';
-import { VdfProxyService } from '../client/vdfProxyFactory';
+import * as vscode from "vscode";
+import { CommandType, ICommand, IDefinitionResult } from "../client/proxy";
+import { VdfProxyService } from "../client/vdfProxyService";
 
 export class VdfDocumentSymbolProvider
   implements vscode.DocumentSymbolProvider {
@@ -28,6 +28,29 @@ export class VdfDocumentSymbolProvider
       .sendCommand(cmd, token)
       .then(result => {
         console.log(result);
+
+        if (result) {
+          const symbols = result.definitions.map(def => {
+            const uri = vscode.Uri.file(def.filePath);
+            return new vscode.SymbolInformation(
+              def.text,
+              def.kind,
+              def.container,
+              new vscode.Location(
+                uri,
+                //new vscode.Position(def.range.startLine, def.range.startColumn)
+                new vscode.Range(
+                  def.range.startLine,
+                  def.range.startColumn,
+                  def.range.endLine,
+                  def.range.endColumn
+                )
+              )
+            );
+          });
+
+          if (symbols.length > 0) return Promise.resolve(symbols);
+        }
         return Promise.reject(null);
       });
   }

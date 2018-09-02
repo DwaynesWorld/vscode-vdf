@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { CommandType, ICommand, IDefinitionResult } from '../client/proxy';
-import { VdfProxyService } from '../client/vdfProxyFactory';
+import { VdfProxyService } from '../client/vdfProxyService';
 
 export class VdfDefinitionProvider implements vscode.DefinitionProvider {
   constructor(private vdfProxyService: VdfProxyService) {}

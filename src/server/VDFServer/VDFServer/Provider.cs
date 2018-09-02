@@ -11,8 +11,10 @@ using Newtonsoft.Json.Serialization;
 using VDFServer.Data;
 using VDFServer.Data.Constants;
 using VDFServer.Data.Enumerations;
+using VDFServer.Data.Models;
 using VDFServer.Models;
 using VDFServer.Parser;
+using VDFServer.Parser.Service;
 
 namespace VDFServer
 {
@@ -35,20 +37,7 @@ namespace VDFServer
             var request = JsonConvert.DeserializeObject<Request>(incomingPayload);
 
             if (!SymbolParser.DoneIndexing)
-            {
-                if (request.Lookup == CommandType.Symbols)
-                {
-                    while (!SymbolParser.DoneIndexing)
-                    {
-                        Thread.Sleep(100);
-                        System.Diagnostics.Debug.WriteLine($"{DateTime.Now}: {request.Path} - I'm sleeping!");
-                    }
-                }
-                else
-                {
-                    return ServerConstants.LANGUAGE_SERVER_INDEXING;
-                }
-            }
+                return HandlePreIndexRequest(request);
 
             // We are not handling anything in a try/catch
             // because we want the program to crash
@@ -62,7 +51,7 @@ namespace VDFServer
                         results = JsonConvert.SerializeObject(definitionResults, _serializerSettings);
                     break;
                 case CommandType.Symbols:
-                    var symbolResults = ProvideDefinition(request);
+                    var symbolResults = ProvideSymbols(request);
                     if (symbolResults != null)
                         results = JsonConvert.SerializeObject(symbolResults, _serializerSettings);
                     break;
@@ -74,6 +63,20 @@ namespace VDFServer
             return results;
         }
 
+        private string HandlePreIndexRequest(Request request)
+        {
+            if (request.Lookup == CommandType.Symbols)
+            {
+                var parser = new InternalParser();
+                var symbols = parser.ParseFile(request.Path);
+                return JsonConvert.SerializeObject(GetSymbolResults(request, symbols), _serializerSettings);
+            }
+            else
+            {
+                return ServerConstants.LANGUAGE_SERVER_INDEXING;
+            }
+        }
+
         private DefinitionResult ProvideSymbols(Request request)
         {
             var symbols = _ctx.Symbols
@@ -83,14 +86,18 @@ namespace VDFServer
             if (!symbols.Any())
                 return null;
 
+            return GetSymbolResults(request, symbols);
+        }
+
+        private DefinitionResult GetSymbolResults(Request request, IEnumerable<LanguageSymbol> symbols)
+        {
             var results = new DefinitionResult();
             results.RequestId = request.Id;
             results.Definitions = new List<Definition>();
             foreach (var symbol in symbols)
             {
-
                 var def = new Definition();
-                def.FilePath = symbol.File.FilePath;
+                def.FilePath = request.Path;
                 def.RawType = "";
                 def.Text = symbol.Name;
                 def.Kind = symbol.Type;
@@ -98,15 +105,14 @@ namespace VDFServer
                 def.Type = request.Lookup;
                 def.Range = new DefinitionRange
                 {
-                    StartLine = symbol.Line,
-                    EndLine = symbol.Line,
+                    StartLine = symbol.StartLine,
+                    EndLine = symbol.EndLine,
                     StartColumn = symbol.StartColumn,
                     EndColumn = symbol.EndColumn
                 };
 
                 results.Definitions.Add(def);
             }
-
             return results;
         }
 
@@ -131,8 +137,8 @@ namespace VDFServer
                 def.Type = request.Lookup;
                 def.Range = new DefinitionRange
                 {
-                    StartLine = match.Line,
-                    EndLine = match.Line,
+                    StartLine = match.StartLine,
+                    EndLine = match.EndLine,
                     StartColumn = match.StartColumn,
                     EndColumn = match.EndColumn
                 };

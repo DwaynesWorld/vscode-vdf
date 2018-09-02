@@ -17,79 +17,95 @@ namespace VDFServer.Tests
         [Fact]
         public void ReturnNullFromBlankLine()
         {
-            var tag = _parserService.ParseLine(string.Empty, string.Empty);
-            Assert.Null(tag);
+            var symbol = _parserService.ParseLine(string.Empty, string.Empty);
+            Assert.Null(symbol);
         }
 
         [Fact]
         public void ReturnNullFromLineWithoutDeclaration()
         {
             var line = "Get piActvRecnum to Activity.Recnum";
-            var tag = _parserService.ParseLine(line, line);
-            Assert.Null(tag);
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Null(symbol);
         }
 
         [Fact]
         public void ReturnClassTypeFromClasstDeclarationLine()
         {
             var line = "Class HCSS_cTextEdit Is A cTextEdit";
-            var tag = _parserService.ParseLine(line, line);
-            Assert.Equal(SymbolKind.Class, tag.Type);
-            Assert.Equal("HCSS_cTextEdit", tag.Name);
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Equal(SymbolKind.Class, symbol.Type);
+            Assert.Equal("HCSS_cTextEdit", symbol.Name);
+        }
+
+        [Fact]
+        public void ReturnNullFromLineWithClassWithoutDeclaration()
+        {
+            var line = "Set Field_Options          Field Bidclass.Class           To DD_CAPSLOCK";
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Null(symbol);
+        }
+
+        [Fact]
+        public void ReturnNullFromLineWithObjectWithoutDeclaration()
+        {
+            var line = "Object Width    __._ __ (Diameter of circular cross sections)";
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Null(symbol);
         }
 
         [Fact]
         public void ReturnObjectTypeFromObjectDeclarationLine()
         {
             var line = "Object aNotes is a HCSS_cTextEdit";
-            var tag = _parserService.ParseLine(line, line);
-            Assert.Equal(SymbolKind.Object, tag.Type);
-            Assert.Equal("aNotes", tag.Name);
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Equal(SymbolKind.Object, symbol.Type);
+            Assert.Equal("aNotes", symbol.Name);
         }
 
         [Fact]
         public void ReturnProcedureTypeFromProcedureDeclarationLine()
         {
             var line = "Procedure UpdateData";
-            var tag = _parserService.ParseLine(line, line);
-            Assert.Equal(SymbolKind.Method, tag.Type);
-            Assert.Equal("UpdateData", tag.Name);
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Equal(SymbolKind.Method, symbol.Type);
+            Assert.Equal("UpdateData", symbol.Name);
         }
 
         [Fact]
         public void ReturnFunctionTypeFromFunctionDeclarationLine()
         {
             var line = "Function Detail_Used String sCode Returns Integer";
-            var tag = _parserService.ParseLine(line, line);
-            Assert.Equal(SymbolKind.Function, tag.Type);
-            Assert.Equal("Detail_Used", tag.Name);
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Equal(SymbolKind.Function, symbol.Type);
+            Assert.Equal("Detail_Used", symbol.Name);
         }
 
         [Fact]
         public void ReturnFunctionTypeFromFunctionDeclarationLineWithArrayParams()
         {
             var line = "Function BiditemIndex String sBid tBid[] ByRef BidData Returns Integer";
-            var tag = _parserService.ParseLine(line, line);
-            Assert.Equal(SymbolKind.Function, tag.Type);
-            Assert.Equal("BiditemIndex", tag.Name);
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Equal(SymbolKind.Function, symbol.Type);
+            Assert.Equal("BiditemIndex", symbol.Name);
         }
 
         [Fact]
         public void ReturnFunctionTypeFromFunctionDeclarationLineWithArrayParamsAndArrayReturn()
         {
             var line = "Function fAdjustExceptionArray tEstdetlData[] tsEstdetldata Integer iPoint Returns tEstdetlData[]";
-            var tag = _parserService.ParseLine(line, line);
-            Assert.Equal(SymbolKind.Function, tag.Type);
-            Assert.Equal("fAdjustExceptionArray", tag.Name);
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Equal(SymbolKind.Function, symbol.Type);
+            Assert.Equal("fAdjustExceptionArray", symbol.Name);
         }
 
         [Fact]
         public void ReturnStructTypeFromStructDeclarationLine()
         {
             var line = "Struct tProductions";
-            var tag = _parserService.ParseLine(line, line);
-            Assert.Equal(SymbolKind.Struct, tag.Type);
-            Assert.Equal("tProductions", tag.Name);
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Equal(SymbolKind.Struct, symbol.Type);
+            Assert.Equal("tProductions", symbol.Name);
         }
     }
 }

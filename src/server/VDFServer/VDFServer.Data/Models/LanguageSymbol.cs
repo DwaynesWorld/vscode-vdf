@@ -10,7 +10,8 @@ namespace VDFServer.Data.Models
         public string Id { get; set; }
         public SymbolKind Type { get; set; }
         public string Name { get; set; }
-        public int Line { get; set; }
+        public int StartLine { get; set; }
+        public int EndLine { get; set; }
         public int StartColumn { get; set; }
         public int EndColumn { get; set; }
         public bool IsContainer { get; set; } = false;

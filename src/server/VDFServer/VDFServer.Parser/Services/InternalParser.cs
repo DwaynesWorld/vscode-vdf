@@ -24,8 +24,10 @@ namespace VDFServer.Parser.Service
 
         public List<LanguageSymbol> ParseFile(string filePath)
         {
-            var containers = new Stack<(string name, SymbolKind kind, int line)>();
+            var containers = new Stack<LanguageSymbol>();
+            var inProcessSymbols = new Stack<LanguageSymbol>();
             var symbols = new List<LanguageSymbol>();
+
             var lines = File.ReadAllLines(filePath);
 
             for (int i = 0; i < lines.Length; i++)
@@ -44,27 +46,34 @@ namespace VDFServer.Parser.Service
                 if (symbol == null)
                     continue;
 
-                if (symbol.IsEndDeclaration)
+                if (!symbol.IsEndDeclaration)
+                {
+                    symbol.StartLine = i;
+                    if (containers.Any())
+                    {
+                        var lastContainer = containers.Peek();
+                        symbol.Container = lastContainer.Name;
+                        symbol.ContainerType = lastContainer.Type;
+                        symbol.ContainerLine = lastContainer.StartLine;
+                    }
+
+                    inProcessSymbols.Push(symbol);
+
+                    if (symbol.IsContainer)
+                        containers.Push(symbol);
+                }
+                else
                 {
                     if (symbol.IsContainer && containers.Any())
                         containers.Pop();
 
-                    continue;
+                    if (inProcessSymbols.Any())
+                    {
+                        var currentSymbol = inProcessSymbols.Pop();
+                        currentSymbol.EndLine = i;
+                        symbols.Add(currentSymbol);
+                    }
                 }
-
-                if (containers.Any())
-                {
-                    var lastContainer = containers.Peek();
-                    symbol.Container = lastContainer.name;
-                    symbol.ContainerType = lastContainer.kind;
-                    symbol.ContainerLine = lastContainer.line;
-                }
-
-                symbol.Line = i;
-                symbols.Add(symbol);
-
-                if (symbol.IsContainer)
-                    containers.Push((symbol.Name, symbol.Type, symbol.Line));
             }
 
             return symbols;
@@ -112,11 +121,17 @@ namespace VDFServer.Parser.Service
 
         public LanguageSymbol ParseClassObjectDeclaration(string line, string originalLine, bool isClass)
         {
-            var nameMatch = Regex.Match(line, Language.CLASS_OBJECT_NAME_PATTERN, RegexOptions.IgnoreCase);
-            if (nameMatch.Value != null)
+            var nameMatch = isClass
+                                ? Regex.Match(line, Language.CLASS_NAME_PATTERN, RegexOptions.IgnoreCase)
+                                : Regex.Match(line, Language.OBJECT_NAME_PATTERN, RegexOptions.IgnoreCase);
+
+            if (nameMatch.Groups.Count > 1)
             {
                 var symbol = new LanguageSymbol();
-                symbol.Name = nameMatch.Value;
+                symbol.Name = nameMatch.Groups[1].Value;
+
+                if (string.IsNullOrWhiteSpace(symbol.Name))
+                    return null;
 
                 symbol.Type = isClass ? SymbolKind.Class : SymbolKind.Object;
                 symbol.StartColumn = originalLine.IndexOf(symbol.Name);
@@ -136,7 +151,7 @@ namespace VDFServer.Parser.Service
                 var symbol = new LanguageSymbol();
                 symbol.Name = nameMatch.Groups[1].Value;
 
-                if (_methodSkiplist.Contains(symbol.Name.ToUpper()))
+                if (string.IsNullOrWhiteSpace(symbol.Name))
                     return null;
 
                 symbol.Type = SymbolKind.Method;
@@ -156,7 +171,7 @@ namespace VDFServer.Parser.Service
                 var symbol = new LanguageSymbol();
                 symbol.Name = nameMatch.Groups[1].Value;
 
-                if (_methodSkiplist.Contains(symbol.Name.ToUpper()))
+                if (string.IsNullOrWhiteSpace(symbol.Name))
                     return null;
 
                 symbol.Type = SymbolKind.Function;
@@ -175,6 +190,9 @@ namespace VDFServer.Parser.Service
             {
                 var symbol = new LanguageSymbol();
                 symbol.Name = nameMatch.Groups[1].Value;
+
+                if (string.IsNullOrWhiteSpace(symbol.Name))
+                    return null;
 
                 symbol.Type = SymbolKind.Struct;
                 symbol.StartColumn = originalLine.IndexOf(symbol.Name);
