@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using VDFServer.Data;
 using VDFServer.Parser;
@@ -16,18 +15,17 @@ namespace VDFServer
     {
         static void Main(string[] args)
         {
-            //WaitForDebugging();
+            WaitForDebugging();
             (string indexPath, string workspaceRootFolder) = HandleArguments(args);
 
             ApplicationDbContext.WorkspaceRootFolder = workspaceRootFolder;
             ApplicationDbContext.IndexPath = indexPath;
-            
-            // Setup Logging
+
+            // Initialize Database
             GlobalServiceProvider.Instance
                 .ServiceProvider
-                .GetService<ILoggerFactory>()
-                .AddConsole(LogLevel.Debug);
-
+                .GetService<ApplicationDbContext>()
+                .InitializeDatabase();
 
             // Start Parsing Workspace
             GlobalServiceProvider.Instance

@@ -40,12 +40,11 @@ namespace VDFServer
 
             // Setup DI
             ServiceProvider = new ServiceCollection()
-                .AddLogging()
-                .AddDbContext<ApplicationDbContext>(options => 
+                .AddDbContext<ApplicationDbContext>(options =>
                     options
                         .UseSqlite($"Data Source={indexFullName}")
-                        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking), 
-                    ServiceLifetime.Transient, 
+                        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
+                    ServiceLifetime.Transient,
                     ServiceLifetime.Singleton)
                 .AddTransient<IProvider, Provider>()
                 .AddTransient<ISymbolParser, SymbolParser>()

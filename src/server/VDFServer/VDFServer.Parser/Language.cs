@@ -23,7 +23,7 @@ namespace VDFServer.Parser
         public const string END_FUNCTION_PATTERN = @"(\bend_function\b)(?=\s*)";
 
         public const string STRUCT_PATTERN = @"(\bstruct\b)(?=\s+)";
-        public const string END_STRUCT_PATTERN = @"(\bstruct\b)(?=\s*)";
+        public const string END_STRUCT_PATTERN = @"(\bend_struct\b)(?=\s*)";
 
         public const string CLASS_NAME_PATTERN = @"(?:\bclass\b\s+)(\w+)(?=\s+\bis\b\s+a)";
         public const string OBJECT_NAME_PATTERN = @"(?:\bobject\b|\bcd_popup_object\b|\bhcss_cd_object\b)(?:\s+)(\w+)(?=\s+\bis\b\s+\ba)";

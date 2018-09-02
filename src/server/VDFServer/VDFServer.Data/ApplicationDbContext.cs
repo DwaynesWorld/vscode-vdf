@@ -8,7 +8,17 @@ namespace VDFServer.Data
         public static string WorkspaceRootFolder = "";
         public static string IndexPath = "";
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+            System.Diagnostics.Debug.WriteLine("New Context Created.");
+        }
+
+        public void InitializeDatabase()
+        {
+            Database.EnsureDeleted();
+            Database.EnsureCreated();
+            System.Diagnostics.Debug.WriteLine("Database Initialized.");
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

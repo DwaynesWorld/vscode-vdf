@@ -106,6 +106,7 @@ export class VdfProxy implements vscode.Disposable {
       if (this.responseIsInternalMessage(processData)) {
         this.handleInternalMessaging(processData);
         this.previousData = "";
+        // Need handle request correctly now.
       } else {
         let results: ICommandResult[];
         try {
