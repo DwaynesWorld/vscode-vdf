@@ -5,8 +5,11 @@ namespace VDFServer.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public string IndexPath { get; private set; } = "";
-        public string WorkspaceRootFolder { get; private set; } = "";
+        private static string _indexPath = "";
+        private static string _workspaceRootFolder = "";
+
+        public string IndexPath { get => _indexPath; private set => _indexPath = value; }
+        public string WorkspaceRootFolder { get => _workspaceRootFolder; private set => _workspaceRootFolder = value; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -16,7 +19,7 @@ namespace VDFServer.Data
         public void InitializeDatabase(string indexPath, string workspaceRootFolder)
         {
             IndexPath = indexPath;
-            WorkspaceRootFolder = WorkspaceRootFolder;
+            WorkspaceRootFolder = workspaceRootFolder;
 
             Database.EnsureDeleted();
             Database.EnsureCreated();

@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as vscode from 'vscode';
-import { ChildProcess, spawn } from 'child_process';
+import * as fs from "fs";
+import * as path from "path";
+import * as vscode from "vscode";
+import { ChildProcess, spawn } from "child_process";
 import {
   createDeferred,
   ICommand,
@@ -9,9 +9,9 @@ import {
   IExecutionCommand,
   IInternalResult,
   IPCMessage
-  } from './proxy';
-import { getUI, UI } from '../common/ui';
-import '../common/extensions';
+} from "./proxy";
+import { getUI, UI } from "../common/ui";
+import "../common/extensions";
 
 export class VdfProxy implements vscode.Disposable {
   private proc?: ChildProcess;
@@ -105,11 +105,9 @@ export class VdfProxy implements vscode.Disposable {
       //console.log("Stream Data: ", data);
       //console.log("Process Data: ", processData);
 
-      var internalResult = this.responseIsInternalMessage(processData);
-      if (internalResult) {
-        this.handleInternalMessaging(internalResult);
+      if (this.responseIsInternalMessage(processData)) {
+        this.handleInternalMessaging(processData);
         this.previousData = "";
-        // Need handle request correctly now.
       } else {
         let results: ICommandResult[];
         try {
@@ -169,22 +167,22 @@ export class VdfProxy implements vscode.Disposable {
     return cmd;
   }
 
-  private responseIsInternalMessage(response: string): IInternalResult | null {
-    var result: IInternalResult;
+  private responseIsInternalMessage(response: string): boolean | undefined {
     try {
-      result = JSON.parse(response);
-      return result;
+      var result = JSON.parse(response) as IInternalResult;
+      return result.isInternal;
     } catch {
-      return null;
+      return false;
     }
   }
 
-  private handleInternalMessaging(result: IInternalResult) {
-    switch (result.MessageType) {
+  private handleInternalMessaging(response: string) {
+    var result = JSON.parse(response) as IInternalResult;
+    switch (result.messageType) {
       case IPCMessage.LanguageServerIndexingComplete:
         this.ui.IsUpdatingIndex = false;
         vscode.window.setStatusBarMessage(
-          `VDF Language Server Indexing Completed: Processing Time ${result.MetaData.trim()} seconds`,
+          `VDF Language Server Indexing Completed: Processing Time ${result.metaData.trim()} seconds`,
           10000
         );
         break;

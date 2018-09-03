@@ -52,10 +52,9 @@ namespace VDFServer
                             .GetService<IProvider>();
 
                         Console.WriteLine(provider.Provide(payload.Trim()));
+                        Console.Out.Flush();
                     });
                 }
-
-                Console.Out.Flush();
             }
         }
 

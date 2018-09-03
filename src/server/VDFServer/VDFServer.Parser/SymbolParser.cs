@@ -54,6 +54,8 @@ namespace VDFServer.Parser
                 };
 
                 Console.WriteLine(_serializer.Serialize(results));
+                Console.Out.Flush();
+
                 Clean();
             });
         }

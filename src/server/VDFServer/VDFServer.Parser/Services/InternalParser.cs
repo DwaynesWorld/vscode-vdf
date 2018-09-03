@@ -10,7 +10,6 @@ namespace VDFServer.Parser.Services
 {
     public class InternalParser : IInternalParser
     {
-
         public InternalParser()
         {
         }
