@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VDFServer.Data;
 using VDFServer.Data.Constants;
+using VDFServer.Data.Entities;
 using VDFServer.Data.Enumerations;
 using VDFServer.Data.Models;
-using VDFServer.Parser.Service;
+using VDFServer.Parser.Services;
 
 namespace VDFServer.Parser
 {
@@ -20,38 +21,47 @@ namespace VDFServer.Parser
 
         private readonly ApplicationDbContext _ctx;
         private readonly IInternalParser _parser;
+        private readonly IVDFServerSerializer _serializer;
+
         private readonly string[] _vdfExtensions = { ".VW", ".RV", ".SL", ".DG", ".SRC", ".DD", ".PKG", ".MOD", ".CLS", ".CLS", ".BPO", ".RPT", ".MNU", ".CAL", ".CON" };
+
 
         public SymbolParser(
             ApplicationDbContext ctx,
-            IInternalParser parser)
+            IInternalParser parser,
+            IVDFServerSerializer serializer)
         {
             _ctx = ctx;
             _parser = parser;
+            _serializer = serializer;
         }
 
         public void Start()
         {
             Task.Run(() =>
-           {
-               var watch = System.Diagnostics.Stopwatch.StartNew();
+            {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                BuildIndex();
+                watch.Stop();
 
-               BuildIndex();
+                DoneIndexing = true;
 
-               watch.Stop();
-               System.Diagnostics.Debug.WriteLine(watch.ElapsedMilliseconds);
+                var results = new InternalResult
+                {
+                    MessageType = IPCMessage.LanguageServerIndexingComplete,
+                    Message = ServerConstants.LANGUAGE_SERVER_INDEXING_COMPLETE,
+                    MetaData = $"{watch.ElapsedMilliseconds / 1000}"
+                };
 
-               DoneIndexing = true;
-               Console.WriteLine($"{ServerConstants.LANGUAGE_SERVER_INDEXING_COMPLETE} - {watch.ElapsedMilliseconds / 1000}");
-
-               Clean();
-           });
+                Console.WriteLine(_serializer.Serialize(results));
+                Clean();
+            });
         }
 
         public async void Clean()
         {
             var filePaths = Directory
-                .EnumerateFiles(ApplicationDbContext.WorkspaceRootFolder, "*", SearchOption.AllDirectories)
+                .EnumerateFiles(_ctx.WorkspaceRootFolder, "*", SearchOption.AllDirectories)
                 .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper()));
 
             if (await _ctx.SourceFiles.CountAsync() != filePaths.Count())
@@ -61,7 +71,7 @@ namespace VDFServer.Parser
         private async void BuildIndex(bool reindex = true)
         {
             foreach (var path in Directory
-                .EnumerateFiles(ApplicationDbContext.WorkspaceRootFolder, "*", SearchOption.AllDirectories)
+                .EnumerateFiles(_ctx.WorkspaceRootFolder, "*", SearchOption.AllDirectories)
                 .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper())))
             {
                 var fileInfo = new FileInfo(path);

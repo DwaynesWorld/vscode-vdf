@@ -3,22 +3,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using VDFServer.Data;
 using VDFServer.Parser;
-using VDFServer.Parser.Service;
+using VDFServer.Parser.Services;
 
 namespace VDFServer
 {
-    public sealed class GlobalServiceProvider
+    public sealed partial class GlobalServiceManager
     {
-        private static GlobalServiceProvider _instance = null;
+        private static GlobalServiceManager _instance = null;
         private static readonly object _lock = new object();
 
         public ServiceProvider ServiceProvider { get; private set; }
 
-        public static GlobalServiceProvider Instance
+        public static GlobalServiceManager Instance
         {
             get
             {
@@ -26,48 +24,35 @@ namespace VDFServer
                 {
                     if (_instance == null)
                     {
-                        _instance = new GlobalServiceProvider();
+                        _instance = new GlobalServiceManager();
                     }
                     return _instance;
                 }
             }
         }
 
-        GlobalServiceProvider()
+        GlobalServiceManager()
         {
-            var indexFile = $"{Hasher.GetStringHash(ApplicationDbContext.WorkspaceRootFolder)}.db";
-            var indexFullName = Path.Combine(ApplicationDbContext.IndexPath, indexFile);
+        }
+
+        public void Initialize(string indexPath, string workspaceRootFolder)
+        {
+            var indexFile = $"{Hasher.GetStringHash(workspaceRootFolder)}.db";
+            var indexFullPath = Path.Combine(indexPath, indexFile);
 
             // Setup DI
             ServiceProvider = new ServiceCollection()
                 .AddDbContext<ApplicationDbContext>(options =>
                     options
-                        .UseSqlite($"Data Source={indexFullName}")
+                        .UseSqlite($"Data Source={indexFullPath}")
                         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
                     ServiceLifetime.Transient,
                     ServiceLifetime.Singleton)
                 .AddTransient<IProvider, Provider>()
                 .AddTransient<ISymbolParser, SymbolParser>()
                 .AddTransient<IInternalParser, InternalParser>()
+                .AddSingleton<IVDFServerSerializer, VDFServerSerializer>()
                 .BuildServiceProvider();
-        }
-
-        public class Hasher
-        {
-            public static string GetStringHash(string value)
-            {
-                StringBuilder sb = new StringBuilder();
-                foreach (byte b in GetHash(value))
-                    sb.Append(b.ToString("X2"));
-
-                return sb.ToString();
-            }
-
-            private static byte[] GetHash(string value)
-            {
-                HashAlgorithm algorithm = SHA256.Create();
-                return algorithm.ComputeHash(Encoding.UTF8.GetBytes(value));
-            }
         }
     }
 }

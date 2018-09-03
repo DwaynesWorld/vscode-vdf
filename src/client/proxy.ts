@@ -39,6 +39,12 @@ export interface IDefinitionResult extends ICommandResult {
   definitions: IDefinition[];
 }
 
+export interface IInternalResult extends ICommandResult {
+  MessageType: IPCMessage;
+  Message: string;
+  MetaData: string;
+}
+
 export interface ICommand<T extends ICommandResult> {
   telemetryEvent?: string;
   command: CommandType;
@@ -124,4 +130,11 @@ export enum CommandType {
   Usages,
   Definitions,
   Symbols
+}
+
+export enum IPCMessage {
+  SymbolNotFound,
+  NoProviderFound,
+  LanguageServerIndexing,
+  LanguageServerIndexingComplete
 }

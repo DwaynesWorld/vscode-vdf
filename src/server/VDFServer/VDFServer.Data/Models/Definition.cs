@@ -1,6 +1,6 @@
 using VDFServer.Data.Enumerations;
 
-namespace VDFServer.Models
+namespace VDFServer.Data.Models
 {
     public class Definition
     {

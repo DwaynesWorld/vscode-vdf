@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using VDFServer.Data;
 using VDFServer.Parser;
-using VDFServer.Parser.Service;
+using VDFServer.Parser.Services;
 
 namespace VDFServer
 {
@@ -15,21 +15,19 @@ namespace VDFServer
     {
         static void Main(string[] args)
         {
-            WaitForDebugging();
+            //WaitForDebugging();
             (string indexPath, string workspaceRootFolder) = HandleArguments(args);
 
-            ApplicationDbContext.WorkspaceRootFolder = workspaceRootFolder;
-            ApplicationDbContext.IndexPath = indexPath;
+            var gsm = GlobalServiceManager.Instance;
+            gsm.Initialize(indexPath, workspaceRootFolder);
 
             // Initialize Database
-            GlobalServiceProvider.Instance
-                .ServiceProvider
+            gsm.ServiceProvider
                 .GetService<ApplicationDbContext>()
-                .InitializeDatabase();
+                .InitializeDatabase(indexPath, workspaceRootFolder);
 
             // Start Parsing Workspace
-            GlobalServiceProvider.Instance
-                .ServiceProvider
+            gsm.ServiceProvider
                 .GetService<ISymbolParser>()
                 .Start();
 
@@ -49,7 +47,7 @@ namespace VDFServer
                 {
                     Task.Run(() =>
                     {
-                        var provider = GlobalServiceProvider.Instance
+                        var provider = GlobalServiceManager.Instance
                             .ServiceProvider
                             .GetService<IProvider>();
 

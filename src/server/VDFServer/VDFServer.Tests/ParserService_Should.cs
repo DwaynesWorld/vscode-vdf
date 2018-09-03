@@ -1,6 +1,6 @@
 using System;
 using VDFServer.Data.Enumerations;
-using VDFServer.Parser.Service;
+using VDFServer.Parser.Services;
 using Xunit;
 
 namespace VDFServer.Tests

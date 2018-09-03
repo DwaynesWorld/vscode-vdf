@@ -10,11 +10,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using VDFServer.Data;
 using VDFServer.Data.Constants;
+using VDFServer.Data.Entities;
 using VDFServer.Data.Enumerations;
 using VDFServer.Data.Models;
-using VDFServer.Models;
 using VDFServer.Parser;
-using VDFServer.Parser.Service;
+using VDFServer.Parser.Services;
 
 namespace VDFServer
 {
@@ -22,22 +22,21 @@ namespace VDFServer
     {
         private readonly ApplicationDbContext _ctx;
         private readonly IInternalParser _internalParser;
-        private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
-        };
+        private readonly IVDFServerSerializer _serializer;
 
         public Provider(
-            ApplicationDbContext ctx, 
-            IInternalParser internalParser)
+            ApplicationDbContext ctx,
+            IInternalParser internalParser,
+            IVDFServerSerializer serializer)
         {
             _ctx = ctx;
             _internalParser = internalParser;
+            _serializer = serializer;
         }
 
         public string Provide(string incomingPayload)
         {
-            var request = JsonConvert.DeserializeObject<Request>(incomingPayload);
+            var request = _serializer.Deserialize<Request>(incomingPayload);
 
             if (!SymbolParser.DoneIndexing)
                 return HandlePreIndexRequest(request);
@@ -45,21 +44,37 @@ namespace VDFServer
             // We are not handling anything in a try/catch
             // because we want the program to crash
             // it will be handled by the parent process
-            var results = ServerConstants.TAG_NOT_FOUND;
+            var results = "";
             switch (request.Lookup)
             {
                 case CommandType.Definitions:
                     var definitionResults = ProvideDefinition(request);
                     if (definitionResults != null)
-                        results = JsonConvert.SerializeObject(definitionResults, _serializerSettings);
+                        results = _serializer.Serialize(definitionResults);
+                    else
+                    {
+                        var notFound = new InternalResult
+                        {
+                            RequestId = request.Id,
+                            MessageType = IPCMessage.SymbolNotFound,
+                            Message = ServerConstants.SYMBOL_NOT_FOUND
+                        };
+                        results = _serializer.Serialize(notFound);
+                    }
                     break;
                 case CommandType.Symbols:
                     var symbolResults = ProvideSymbols(request);
                     if (symbolResults != null)
-                        results = JsonConvert.SerializeObject(symbolResults, _serializerSettings);
+                        results = _serializer.Serialize(symbolResults);
                     break;
                 default:
-                    results = ServerConstants.NO_PROVIDER_FOUND;
+                    var defaultResult = new InternalResult
+                    {
+                        RequestId = request.Id,
+                        MessageType = IPCMessage.NoProviderFound,
+                        Message = ServerConstants.NO_PROVIDER_FOUND
+                    };
+                    results = _serializer.Serialize(defaultResult);
                     break;
             }
 
@@ -71,11 +86,17 @@ namespace VDFServer
             if (request.Lookup == CommandType.Symbols)
             {
                 var symbols = _internalParser.ParseFile(request.Path);
-                return JsonConvert.SerializeObject(GetSymbolResults(request, symbols), _serializerSettings);
+                return _serializer.Serialize(GetSymbolResults(request, symbols));
             }
             else
             {
-                return ServerConstants.LANGUAGE_SERVER_INDEXING;
+                var results = new InternalResult
+                {
+                    RequestId = request.Id,
+                    MessageType = IPCMessage.LanguageServerIndexing,
+                    Message = ServerConstants.LANGUAGE_SERVER_INDEXING
+                };
+                return _serializer.Serialize(results);
             }
         }
 

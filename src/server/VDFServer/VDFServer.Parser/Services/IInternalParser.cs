@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using VDFServer.Data.Entities;
 using VDFServer.Data.Enumerations;
-using VDFServer.Data.Models;
 
-namespace VDFServer.Parser.Service
+namespace VDFServer.Parser.Services
 {
     public interface IInternalParser
     {

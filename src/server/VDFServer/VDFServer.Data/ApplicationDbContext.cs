@@ -1,20 +1,23 @@
 using Microsoft.EntityFrameworkCore;
-using VDFServer.Data.Models;
+using VDFServer.Data.Entities;
 
 namespace VDFServer.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public static string WorkspaceRootFolder = "";
-        public static string IndexPath = "";
+        public string IndexPath { get; private set; } = "";
+        public string WorkspaceRootFolder { get; private set; } = "";
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
             System.Diagnostics.Debug.WriteLine("New Context Created.");
         }
 
-        public void InitializeDatabase()
+        public void InitializeDatabase(string indexPath, string workspaceRootFolder)
         {
+            IndexPath = indexPath;
+            WorkspaceRootFolder = WorkspaceRootFolder;
+
             Database.EnsureDeleted();
             Database.EnsureCreated();
             System.Diagnostics.Debug.WriteLine("Database Initialized.");
