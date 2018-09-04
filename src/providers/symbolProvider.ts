@@ -1,6 +1,6 @@
-import * as vscode from "vscode";
-import { CommandType, ICommand, IDefinitionResult } from "../client/proxy";
-import { VdfProxyService } from "../client/vdfProxyService";
+import * as vscode from 'vscode';
+import { CommandType, ICommand, IDefinitionResult } from '../client/proxy';
+import { VdfProxyService } from '../client/vdfProxyService';
 
 export class VdfDocumentSymbolProvider
   implements vscode.DocumentSymbolProvider {
@@ -38,7 +38,6 @@ export class VdfDocumentSymbolProvider
               def.container,
               new vscode.Location(
                 uri,
-                //new vscode.Position(def.range.startLine, def.range.startColumn)
                 new vscode.Range(
                   def.range.startLine,
                   def.range.startColumn,
