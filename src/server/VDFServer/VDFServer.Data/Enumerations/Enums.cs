@@ -1,5 +1,13 @@
 namespace VDFServer.Data.Enumerations
 {
+    public enum IPCMessage
+    {
+        SymbolNotFound,
+        NoProviderFound,
+        LanguageServerIndexing,
+        LanguageServerIndexingComplete,
+    }
+
     public enum SymbolKind
     {
         File = 0,

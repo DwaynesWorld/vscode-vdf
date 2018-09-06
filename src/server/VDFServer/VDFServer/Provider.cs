@@ -10,53 +10,71 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using VDFServer.Data;
 using VDFServer.Data.Constants;
+using VDFServer.Data.Entities;
 using VDFServer.Data.Enumerations;
 using VDFServer.Data.Models;
-using VDFServer.Models;
 using VDFServer.Parser;
-using VDFServer.Parser.Service;
+using VDFServer.Parser.Services;
 
 namespace VDFServer
 {
-    public class Provider : IDisposable
+    public class Provider : IProvider
     {
-        private ApplicationDbContext _ctx;
+        private readonly ApplicationDbContext _ctx;
+        private readonly IInternalParser _internalParser;
+        private readonly IVDFServerSerializer _serializer;
 
-        private static JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
+        public Provider(
+            ApplicationDbContext ctx,
+            IInternalParser internalParser,
+            IVDFServerSerializer serializer)
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
-        };
-
-        public Provider(DbContextOptions<ApplicationDbContext> options)
-        {
-            _ctx = new ApplicationDbContext(options);
+            _ctx = ctx;
+            _internalParser = internalParser;
+            _serializer = serializer;
         }
 
         public string Provide(string incomingPayload)
         {
-            var request = JsonConvert.DeserializeObject<Request>(incomingPayload);
+            var request = _serializer.Deserialize<Request>(incomingPayload);
 
-            if (!SymbolParser.DoneIndexing)
+            if (!WorkspaceSymbolParser.DoneIndexing)
                 return HandlePreIndexRequest(request);
 
             // We are not handling anything in a try/catch
             // because we want the program to crash
             // it will be handled by the parent process
-            var results = ServerConstants.TAG_NOT_FOUND;
+            var results = "";
             switch (request.Lookup)
             {
                 case CommandType.Definitions:
                     var definitionResults = ProvideDefinition(request);
                     if (definitionResults != null)
-                        results = JsonConvert.SerializeObject(definitionResults, _serializerSettings);
+                        results = _serializer.Serialize(definitionResults);
+                    else
+                    {
+                        var notFound = new InternalResult
+                        {
+                            RequestId = request.Id,
+                            MessageType = IPCMessage.SymbolNotFound,
+                            Message = ServerConstants.SYMBOL_NOT_FOUND
+                        };
+                        results = _serializer.Serialize(notFound);
+                    }
                     break;
                 case CommandType.Symbols:
                     var symbolResults = ProvideSymbols(request);
                     if (symbolResults != null)
-                        results = JsonConvert.SerializeObject(symbolResults, _serializerSettings);
+                        results = _serializer.Serialize(symbolResults);
                     break;
                 default:
-                    results = ServerConstants.NO_PROVIDER_FOUND;
+                    var defaultResult = new InternalResult
+                    {
+                        RequestId = request.Id,
+                        MessageType = IPCMessage.NoProviderFound,
+                        Message = ServerConstants.NO_PROVIDER_FOUND
+                    };
+                    results = _serializer.Serialize(defaultResult);
                     break;
             }
 
@@ -67,21 +85,26 @@ namespace VDFServer
         {
             if (request.Lookup == CommandType.Symbols)
             {
-                var parser = new InternalParser();
-                var symbols = parser.ParseFile(request.Path);
-                return JsonConvert.SerializeObject(GetSymbolResults(request, symbols), _serializerSettings);
+                var symbols = _internalParser.ParseFile(request.Path);
+                return _serializer.Serialize(GetSymbolResults(request, symbols));
             }
             else
             {
-                return ServerConstants.LANGUAGE_SERVER_INDEXING;
+                var results = new InternalResult
+                {
+                    RequestId = request.Id,
+                    MessageType = IPCMessage.LanguageServerIndexing,
+                    Message = ServerConstants.LANGUAGE_SERVER_INDEXING
+                };
+                return _serializer.Serialize(results);
             }
         }
 
         private DefinitionResult ProvideSymbols(Request request)
         {
             var symbols = _ctx.Symbols
-                    .Include(s => s.File)
-                    .Where(s => s.File.FilePath.ToUpper() == request.Path.ToUpper());
+                .Include(s => s.File)
+                .Where(s => s.File.FilePath.ToUpper() == request.Path.ToUpper());
 
             if (!symbols.Any())
                 return null;
@@ -101,7 +124,7 @@ namespace VDFServer
                 def.RawType = "";
                 def.Text = symbol.Name;
                 def.Kind = symbol.Type;
-                def.Container = symbol.Container;
+                def.Container = symbol.Container ?? "";
                 def.Type = request.Lookup;
                 def.Range = new DefinitionRange
                 {
@@ -147,15 +170,6 @@ namespace VDFServer
             }
 
             return results;
-        }
-
-        public void Dispose()
-        {
-            if (_ctx != null)
-            {
-                _ctx.Dispose();
-                _ctx = null;
-            }
         }
     }
 }

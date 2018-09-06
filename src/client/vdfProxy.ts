@@ -1,15 +1,17 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as vscode from 'vscode';
-import { ChildProcess, spawn } from 'child_process';
+import * as fs from "fs";
+import * as path from "path";
+import * as vscode from "vscode";
+import { ChildProcess, spawn } from "child_process";
 import {
   createDeferred,
   ICommand,
   ICommandResult,
-  IExecutionCommand
-  } from './proxy';
-import { getUI, UI } from '../common/ui';
-import '../common/extensions';
+  IExecutionCommand,
+  IInternalResult,
+  IPCMessage
+} from "./proxy";
+import { getUI, UI } from "../common/ui";
+import "../common/extensions";
 
 export class VdfProxy implements vscode.Disposable {
   private proc?: ChildProcess;
@@ -100,7 +102,7 @@ export class VdfProxy implements vscode.Disposable {
       const processData: string = `${this.previousData}${data}`;
       this.previousData = processData;
 
-      console.log("Stream Data: ", data);
+      //console.log("Stream Data: ", data);
       //console.log("Process Data: ", processData);
 
       if (this.responseIsInternalMessage(processData)) {
@@ -120,15 +122,8 @@ export class VdfProxy implements vscode.Disposable {
 
         results.forEach(result => {
           if (result.requestId != null && this.commands.has(result.requestId)) {
-            const cmd = this.commands.get(result.requestId);
+            const cmd = this.clearRequestFromQueue(result);
             if (cmd) {
-              this.commands.delete(result.requestId);
-
-              const index = this.commandQueue.indexOf(cmd.id);
-              if (index !== -1) {
-                this.commandQueue.splice(index, 1);
-              }
-
               if (cmd.token.isCancellationRequested) {
                 this.tryResolve(cmd, undefined);
               } else {
@@ -156,33 +151,56 @@ export class VdfProxy implements vscode.Disposable {
     });
   }
 
-  private responseIsInternalMessage(response: string): boolean {
-    if (
-      response.startsWith("TAG_NOT_FOUND") ||
-      response.startsWith("NO_PROVIDER_FOUND") ||
-      response.startsWith("LANGUAGE_SERVER_INDEXING") ||
-      response.startsWith("LANGUAGE_SERVER_INDEXING_COMPLETE")
-    )
-      return true;
+  private clearRequestFromQueue(
+    result: ICommandResult
+  ): IExecutionCommand<ICommandResult> | undefined {
+    const cmd = this.commands.get(result.requestId);
+    if (cmd) {
+      this.commands.delete(result.requestId);
 
-    return false;
+      const index = this.commandQueue.indexOf(cmd.id);
+      if (index !== -1) {
+        this.commandQueue.splice(index, 1);
+      }
+    }
+
+    return cmd;
+  }
+
+  private responseIsInternalMessage(response: string): boolean | undefined {
+    try {
+      var result = JSON.parse(response) as IInternalResult;
+      return result.isInternal;
+    } catch {
+      return false;
+    }
   }
 
   private handleInternalMessaging(response: string) {
-    if (response.startsWith("LANGUAGE_SERVER_INDEXING_COMPLETE")) {
-      this.ui.IsUpdatingIndex = false;
-      const timeBreakPos = response.indexOf("-");
-      if (timeBreakPos !== -1) {
-        const time = response.substring(timeBreakPos).trim();
+    var result = JSON.parse(response) as IInternalResult;
+    switch (result.messageType) {
+      case IPCMessage.LanguageServerIndexingComplete:
+        this.ui.IsUpdatingIndex = false;
         vscode.window.setStatusBarMessage(
-          `VDF Language Server Indexing Completed: Processing Time ${time} seconds`,
+          `VDF Language Server Indexing Completed: Processing Time ${result.metaData.trim()} seconds`,
           10000
         );
-      }
-    } else if (response.startsWith("LANGUAGE_SERVER_INDEXING")) {
-      vscode.window.showInformationMessage(
-        "VDF Language Server is currently indexing files. Please try again when indexing has been completed."
-      );
+        break;
+      case IPCMessage.LanguageServerIndexing:
+        vscode.window.showInformationMessage(
+          "VDF Language Server is currently indexing files. Please try again when indexing has been completed."
+        );
+      case IPCMessage.SymbolNotFound:
+      case IPCMessage.NoProviderFound:
+        if (result.requestId != -1 && this.commands.has(result.requestId)) {
+          const cmd = this.clearRequestFromQueue(result);
+          if (cmd) {
+            this.tryResolve(cmd, undefined);
+          }
+        }
+        break;
+      default:
+        break;
     }
   }
 

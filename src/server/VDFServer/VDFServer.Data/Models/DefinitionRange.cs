@@ -1,4 +1,4 @@
-namespace VDFServer.Models
+namespace VDFServer.Data.Models
 {
     public class DefinitionRange
     {

@@ -1,4 +1,4 @@
-import { CancellationToken, SymbolInformation, SymbolKind } from 'vscode';
+import { CancellationToken, SymbolInformation, SymbolKind } from "vscode";
 
 export interface IDefinitionRange {
   startLine: number;
@@ -37,6 +37,13 @@ export interface IHoverResult extends ICommandResult {
 }
 export interface IDefinitionResult extends ICommandResult {
   definitions: IDefinition[];
+}
+
+export interface IInternalResult extends ICommandResult {
+  isInternal: boolean;
+  messageType: IPCMessage;
+  message: string;
+  metaData: string;
 }
 
 export interface ICommand<T extends ICommandResult> {
@@ -124,4 +131,11 @@ export enum CommandType {
   Usages,
   Definitions,
   Symbols
+}
+
+export enum IPCMessage {
+  SymbolNotFound,
+  NoProviderFound,
+  LanguageServerIndexing,
+  LanguageServerIndexingComplete
 }

@@ -3,23 +3,15 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using VDFServer.Data.Enumerations;
-using VDFServer.Data.Models;
+using VDFServer.Data.Entities;
 using VDFServer.Parser;
 
-namespace VDFServer.Parser.Service
+namespace VDFServer.Parser.Services
 {
-    public class InternalParser
+    public class InternalParser : IInternalParser
     {
-        private string[] _methodSkiplist;
-
         public InternalParser()
         {
-            _methodSkiplist = new string[] { };
-        }
-
-        public InternalParser(string[] methodSkipList)
-        {
-            _methodSkiplist = methodSkipList;
         }
 
         public List<LanguageSymbol> ParseFile(string filePath)

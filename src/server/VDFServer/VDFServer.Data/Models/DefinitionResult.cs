@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace VDFServer.Models
+namespace VDFServer.Data.Models
 {
     public class DefinitionResult : CommandResult
     {

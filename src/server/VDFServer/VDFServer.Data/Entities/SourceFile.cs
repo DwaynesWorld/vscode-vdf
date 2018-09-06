@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace VDFServer.Data.Models
+namespace VDFServer.Data.Entities
 {
     public class SourceFile
     {

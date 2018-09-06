@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using VDFServer.Data.Enumerations;
 
-namespace VDFServer.Data.Models
+namespace VDFServer.Data.Entities
 {
     public class LanguageSymbol
     {

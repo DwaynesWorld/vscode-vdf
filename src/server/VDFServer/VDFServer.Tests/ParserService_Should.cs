@@ -1,6 +1,6 @@
 using System;
 using VDFServer.Data.Enumerations;
-using VDFServer.Parser.Service;
+using VDFServer.Parser.Services;
 using Xunit;
 
 namespace VDFServer.Tests
@@ -106,6 +106,15 @@ namespace VDFServer.Tests
             var symbol = _parserService.ParseLine(line, line);
             Assert.Equal(SymbolKind.Struct, symbol.Type);
             Assert.Equal("tProductions", symbol.Name);
+        }
+
+        [Fact]
+        public void ReturnObjectFromNonWordObjectDeclaration()
+        {
+            var line = "Object oClient# is a HCSS_dbForm";
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Equal(SymbolKind.Object, symbol.Type);
+            Assert.Equal("oClient#", symbol.Name);
         }
     }
 }

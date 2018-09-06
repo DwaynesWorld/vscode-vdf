@@ -10,10 +10,12 @@ export class VdfDefinitionProvider implements vscode.DefinitionProvider {
     position: vscode.Position,
     token: vscode.CancellationToken
   ): Thenable<vscode.Definition> {
+    // Comment line
     if (document.lineAt(position.line).text.match(/^\s*\/\//)) {
       return Promise.resolve(null);
     }
 
+    // Negative character
     if (position.character <= 0) {
       return Promise.resolve(null);
     }
