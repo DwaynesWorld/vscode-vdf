@@ -45,8 +45,9 @@ namespace VDFServer.Parser
 
                 DoneIndexing = true;
 
-                var results = new InternalResult
+                var results = new CommandResult
                 {
+                    IsInternal = true,
                     MessageType = IPCMessage.LanguageServerIndexingComplete,
                     Message = ServerConstants.LANGUAGE_SERVER_INDEXING_COMPLETE,
                     MetaData = $"{watch.ElapsedMilliseconds / 1000}"

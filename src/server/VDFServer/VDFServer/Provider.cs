@@ -53,8 +53,9 @@ namespace VDFServer
                         results = _serializer.Serialize(definitionResults);
                     else
                     {
-                        var notFound = new InternalResult
+                        var notFound = new CommandResult
                         {
+                            IsInternal = true,
                             RequestId = request.Id,
                             MessageType = IPCMessage.SymbolNotFound,
                             Message = ServerConstants.SYMBOL_NOT_FOUND
@@ -68,8 +69,9 @@ namespace VDFServer
                         results = _serializer.Serialize(symbolResults);
                     break;
                 default:
-                    var defaultResult = new InternalResult
+                    var defaultResult = new CommandResult
                     {
+                        IsInternal = true,
                         RequestId = request.Id,
                         MessageType = IPCMessage.NoProviderFound,
                         Message = ServerConstants.NO_PROVIDER_FOUND
@@ -90,8 +92,9 @@ namespace VDFServer
             }
             else
             {
-                var results = new InternalResult
+                var results = new CommandResult
                 {
+                    IsInternal = true,
                     RequestId = request.Id,
                     MessageType = IPCMessage.LanguageServerIndexing,
                     Message = ServerConstants.LANGUAGE_SERVER_INDEXING

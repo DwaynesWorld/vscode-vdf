@@ -2,6 +2,7 @@ namespace VDFServer.Data.Enumerations
 {
     public enum IPCMessage
     {
+        None,
         SymbolNotFound,
         NoProviderFound,
         LanguageServerIndexing,
