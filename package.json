@@ -100,7 +100,7 @@
     "del-cli": "^1.1.0",
     "mocha": "^5.2.0",
     "typescript": "^2.0.3",
-    "vsce": "^1.46.0",
+    "vsce": "^1.48.0",
     "vscode": "^1.1.21"
   },
   "dependencies": {}

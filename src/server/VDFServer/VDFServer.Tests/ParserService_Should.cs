@@ -107,5 +107,14 @@ namespace VDFServer.Tests
             Assert.Equal(SymbolKind.Struct, symbol.Type);
             Assert.Equal("tProductions", symbol.Name);
         }
+
+        [Fact]
+        public void ReturnObjectFromNonWordObjectDeclaration()
+        {
+            var line = "Object oClient# is a HCSS_dbForm";
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Equal(SymbolKind.Object, symbol.Type);
+            Assert.Equal("oClient#", symbol.Name);
+        }
     }
 }

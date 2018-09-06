@@ -15,7 +15,7 @@ namespace VDFServer
     {
         static void Main(string[] args)
         {
-            //WaitForDebugging();
+            WaitForDebugging();
             (string indexPath, string workspaceRootFolder) = HandleArguments(args);
 
             var gsm = GlobalServiceManager.Instance;
@@ -28,7 +28,7 @@ namespace VDFServer
 
             // Start Parsing Workspace
             gsm.ServiceProvider
-                .GetService<ISymbolParser>()
+                .GetService<IWorkspaceSymbolParser>()
                 .Start();
 
             int length;
@@ -41,7 +41,7 @@ namespace VDFServer
                 var load = Encoding.UTF8.GetString(message);
 
                 System.Diagnostics.Debug.WriteLine(load);
-                var payloads = load.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                var payloads = load.Split(new [] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var payload in payloads)
                 {
@@ -58,7 +58,7 @@ namespace VDFServer
             }
         }
 
-        private static (string indexPath, string workspaceRootPath) HandleArguments(string[] args)
+        private static(string indexPath, string workspaceRootPath) HandleArguments(string[] args)
         {
             if (args.Length < 1)
                 throw new ApplicationException("Required arguments missing: IndexPath, WorkspaceRootPath");
@@ -80,8 +80,6 @@ namespace VDFServer
 
             return (indexPath, workspaceRootPath);
         }
-
-
 
         [System.Diagnostics.Conditional("DEBUG")]
         private static void WaitForDebugging()

@@ -38,7 +38,7 @@ namespace VDFServer
         {
             var request = _serializer.Deserialize<Request>(incomingPayload);
 
-            if (!SymbolParser.DoneIndexing)
+            if (!WorkspaceSymbolParser.DoneIndexing)
                 return HandlePreIndexRequest(request);
 
             // We are not handling anything in a try/catch
@@ -103,8 +103,8 @@ namespace VDFServer
         private DefinitionResult ProvideSymbols(Request request)
         {
             var symbols = _ctx.Symbols
-                    .Include(s => s.File)
-                    .Where(s => s.File.FilePath.ToUpper() == request.Path.ToUpper());
+                .Include(s => s.File)
+                .Where(s => s.File.FilePath.ToUpper() == request.Path.ToUpper());
 
             if (!symbols.Any())
                 return null;
@@ -124,7 +124,7 @@ namespace VDFServer
                 def.RawType = "";
                 def.Text = symbol.Name;
                 def.Kind = symbol.Type;
-                def.Container = symbol.Container;
+                def.Container = symbol.Container ?? "";
                 def.Type = request.Lookup;
                 def.Range = new DefinitionRange
                 {

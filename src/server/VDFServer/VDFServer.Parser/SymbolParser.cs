@@ -15,7 +15,7 @@ using VDFServer.Parser.Services;
 
 namespace VDFServer.Parser
 {
-    public class SymbolParser : ISymbolParser
+    public class WorkspaceSymbolParser : IWorkspaceSymbolParser
     {
         public static volatile bool DoneIndexing = false;
 
@@ -25,8 +25,7 @@ namespace VDFServer.Parser
 
         private readonly string[] _vdfExtensions = { ".VW", ".RV", ".SL", ".DG", ".SRC", ".DD", ".PKG", ".MOD", ".CLS", ".CLS", ".BPO", ".RPT", ".MNU", ".CAL", ".CON" };
 
-
-        public SymbolParser(
+        public WorkspaceSymbolParser(
             ApplicationDbContext ctx,
             IInternalParser parser,
             IVDFServerSerializer serializer)
@@ -73,8 +72,8 @@ namespace VDFServer.Parser
         private async void BuildIndex(bool reindex = true)
         {
             foreach (var path in Directory
-                .EnumerateFiles(_ctx.WorkspaceRootFolder, "*", SearchOption.AllDirectories)
-                .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper())))
+                    .EnumerateFiles(_ctx.WorkspaceRootFolder, "*", SearchOption.AllDirectories)
+                    .Where(f => _vdfExtensions.Contains(Path.GetExtension(f).ToUpper())))
             {
                 var fileInfo = new FileInfo(path);
                 var sourceFile = await _ctx.SourceFiles

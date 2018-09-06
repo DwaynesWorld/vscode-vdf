@@ -2,7 +2,7 @@
 
 namespace VDFServer.Parser
 {
-    public interface ISymbolParser
+    public interface IWorkspaceSymbolParser
     {
         void Clean();
         void Start();

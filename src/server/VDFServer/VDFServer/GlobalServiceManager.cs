@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.IO;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.IO;
 using VDFServer.Data;
 using VDFServer.Parser;
 using VDFServer.Parser.Services;
@@ -20,7 +20,7 @@ namespace VDFServer
         {
             get
             {
-                lock (_lock)
+                lock(_lock)
                 {
                     if (_instance == null)
                     {
@@ -31,9 +31,7 @@ namespace VDFServer
             }
         }
 
-        GlobalServiceManager()
-        {
-        }
+        GlobalServiceManager() { }
 
         public void Initialize(string indexPath, string workspaceRootFolder)
         {
@@ -44,12 +42,12 @@ namespace VDFServer
             ServiceProvider = new ServiceCollection()
                 .AddDbContext<ApplicationDbContext>(options =>
                     options
-                        .UseSqlite($"Data Source={indexFullPath}")
-                        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
+                    .UseSqlite($"Data Source={indexFullPath}")
+                    .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
                     ServiceLifetime.Transient,
                     ServiceLifetime.Singleton)
                 .AddTransient<IProvider, Provider>()
-                .AddTransient<ISymbolParser, SymbolParser>()
+                .AddTransient<IWorkspaceSymbolParser, WorkspaceSymbolParser>()
                 .AddTransient<IInternalParser, InternalParser>()
                 .AddSingleton<IVDFServerSerializer, VDFServerSerializer>()
                 .BuildServiceProvider();
