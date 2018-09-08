@@ -15,7 +15,7 @@ export class VdfDefinitionProvider implements vscode.DefinitionProvider {
       return Promise.resolve(null);
     }
 
-    // Negative character
+    // What the hell!
     if (position.character <= 0) {
       return Promise.resolve(null);
     }

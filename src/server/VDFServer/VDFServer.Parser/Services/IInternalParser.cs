@@ -11,7 +11,7 @@ namespace VDFServer.Parser.Services
         List<LanguageSymbol> ParseFile(string filePath);
         LanguageSymbol ParseFunctionDeclaration(string line, string originalLine);
         LanguageSymbol ParseLine(string line, string originalLine);
-        LanguageSymbol ParseProcedureDeclaration(string line, string originalLine);
+        LanguageSymbol ParseProcedureDeclaration(string line, string originalLine, bool isProcedureSet);
         LanguageSymbol ParseStructDeclaration(string line, string originalLine);
     }
 }

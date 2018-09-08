@@ -73,6 +73,15 @@ namespace VDFServer.Tests
         }
 
         [Fact]
+        public void ReturnPropertyNameFromProcedureSetDeclaration()
+        {
+            var line = "Procedure Set Column_Mask Integer iGridColumn Integer iColumn Integer iMaskType String sMask";
+            var symbol = _parserService.ParseLine(line, line);
+            Assert.Equal(SymbolKind.Method, symbol.Type);
+            Assert.Equal("Column_Mask", symbol.Name);
+        }
+
+        [Fact]
         public void ReturnFunctionTypeFromFunctionDeclarationLine()
         {
             var line = "Function Detail_Used String sCode Returns Integer";

@@ -16,7 +16,9 @@ namespace VDFServer.Parser
         public const string OBJECT_PATTERN = @"(\bobject\b|\bcd_popup_object\b|\bhcss_cd_object\b|\bCD_Popup_Object_Ex\b)(?=\s+[\w#]+\s+is)";
         public const string END_OBJECT_PATTERN = @"(\bend_object\b|\bcd_end_object\b)(?=\s*)";
 
-        public const string PROCEDURE_PATTERN = @"(\bprocedure\b)(?=\s+)";
+        public const string PROCEDURE_SET_PATTERN = @"(\bprocedure\b\s\bset\b)(?=\s+)";
+
+        public const string PROCEDURE_PATTERN = @"(\bprocedure\b)(?!\s\bset\b\s)(?=\s+)";
         public const string END_PROCEDURE_PATTERN = @"(\bend_procedure\b)(?=\s*)";
 
         public const string FUNCTION_PATTERN = @"(\bfunction\b)(?=\s+)";
@@ -27,7 +29,8 @@ namespace VDFServer.Parser
 
         public const string CLASS_NAME_PATTERN = @"(?:\bclass\b\s+)([\w#]+)(?=\s+\bis\b\s+a)";
         public const string OBJECT_NAME_PATTERN = @"(?:\bobject\b|\bcd_popup_object\b|\bhcss_cd_object\b)(?:\s+)([\w#]+)(?=\s+\bis\b\s+\ba)";
-        public const string PROCEDURE_NAME_PATTERN = @"(?:\bprocedure\b\s+)([\w#]+)";
+        public const string PROCEDURE_SET_NAME_PATTERN = @"(?:\bprocedure\b\s+\bset\b\s+)([\w#]+)";
+        public const string PROCEDURE_NAME_PATTERN = @"(?:\bprocedure\b(?!\s+\bset\b)\s+)([\w#]+)";
         public const string STRUCT_NAME_PATTERN = @"(?:\bstruct\b\s+)([\w#]+)";
         public const string FUNCTION_NAME_PATTERN = @"(?:\bfunction\b)\s+([\w#]+)";
     }

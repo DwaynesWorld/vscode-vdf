@@ -78,8 +78,10 @@ namespace VDFServer.Parser.Services
             else if (Regex.IsMatch(line, Language.END_FUNCTION_PATTERN, RegexOptions.IgnoreCase))
                 return EndSymbolDeclaration(SymbolKind.Function);
 
+            else if (Regex.IsMatch(line, Language.PROCEDURE_SET_PATTERN, RegexOptions.IgnoreCase))
+                return ParseProcedureDeclaration(line, originalLine, true);
             else if (Regex.IsMatch(line, Language.PROCEDURE_PATTERN, RegexOptions.IgnoreCase))
-                return ParseProcedureDeclaration(line, originalLine);
+                return ParseProcedureDeclaration(line, originalLine, false);
             else if (Regex.IsMatch(line, Language.END_PROCEDURE_PATTERN, RegexOptions.IgnoreCase))
                 return EndSymbolDeclaration(SymbolKind.Method);
 
@@ -135,9 +137,12 @@ namespace VDFServer.Parser.Services
             return null;
         }
 
-        public LanguageSymbol ParseProcedureDeclaration(string line, string originalLine)
+        public LanguageSymbol ParseProcedureDeclaration(string line, string originalLine, bool isProcedureSet)
         {
-            var nameMatch = Regex.Match(line, Language.PROCEDURE_NAME_PATTERN, RegexOptions.IgnoreCase);
+            var nameMatch = isProcedureSet
+                                ? Regex.Match(line, Language.PROCEDURE_SET_NAME_PATTERN, RegexOptions.IgnoreCase)
+                                : Regex.Match(line, Language.PROCEDURE_NAME_PATTERN, RegexOptions.IgnoreCase);
+
             if (nameMatch.Groups.Count > 1)
             {
                 var symbol = new LanguageSymbol();
