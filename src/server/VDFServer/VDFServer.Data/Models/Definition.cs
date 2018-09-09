@@ -10,6 +10,6 @@ namespace VDFServer.Data.Models
         public SymbolKind Kind { get; set; }
         public string Container { get; set; }
         public string FilePath { get; set; }
-        public DefinitionRange Range { get; set; }
+        public Range Range { get; set; }
     }
 }

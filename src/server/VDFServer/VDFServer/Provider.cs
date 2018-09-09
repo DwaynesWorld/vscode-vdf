@@ -68,6 +68,16 @@ namespace VDFServer
                     if (symbolResults != null)
                         results = _serializer.Serialize(symbolResults);
                     break;
+                case CommandType.Diagnostics:
+                    var diagResults = ProvideDiagnostics(request);
+                    if (diagResults != null)
+                        results = _serializer.Serialize(diagResults);
+                    break;
+                case CommandType.Hover:
+                    var hoverResults = ProvideHover(request);
+                    if (hoverResults != null)
+                        results = _serializer.Serialize(hoverResults);
+                    break;
                 default:
                     var defaultResult = new CommandResult
                     {
@@ -129,7 +139,7 @@ namespace VDFServer
                 def.Kind = symbol.Type;
                 def.Container = symbol.Container ?? "";
                 def.Type = request.Lookup;
-                def.Range = new DefinitionRange
+                def.Range = new Range
                 {
                     StartLine = symbol.StartLine,
                     EndLine = symbol.EndLine,
@@ -161,7 +171,7 @@ namespace VDFServer
                 def.RawType = "";
                 def.Text = "";
                 def.Type = request.Lookup;
-                def.Range = new DefinitionRange
+                def.Range = new Range
                 {
                     StartLine = match.StartLine,
                     EndLine = match.EndLine,
@@ -173,6 +183,17 @@ namespace VDFServer
             }
 
             return results;
+        }
+
+        private DiagnosticResult ProvideDiagnostics(Request request)
+        {
+            //if (!File.Exists(request.Path))
+            return null;
+        }
+
+        private HoverResult ProvideHover(Request request)
+        {
+            return null;
         }
     }
 }

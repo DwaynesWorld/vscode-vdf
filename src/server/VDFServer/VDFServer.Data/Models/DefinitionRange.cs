@@ -1,6 +1,6 @@
 namespace VDFServer.Data.Models
 {
-    public class DefinitionRange
+    public class Range
     {
         public int StartLine { get; set; }
         public int StartColumn { get; set; }

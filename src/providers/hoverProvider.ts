@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
-import { CommandType, ICommand, IHoverResult } from '../client/proxy';
-import { VdfProxyService } from '../client/vdfProxyService';
+import * as vscode from "vscode";
+import { CommandType, ICommand, IHoverResult } from "../client/proxy";
+import { VdfProxyService } from "../client/vdfProxyService";
 
 export class VdfHoverProvider implements vscode.HoverProvider {
   constructor(private vdfProxyService: VdfProxyService) {}
@@ -37,42 +37,41 @@ export class VdfHoverProvider implements vscode.HoverProvider {
       lineIndex
     };
 
-    var s: vscode.MarkdownString = new vscode.MarkdownString("#Test");
-    var ss: vscode.MarkdownString = new vscode.MarkdownString(
-      "##Testing More."
-    );
-    var sss: vscode.MarkdownString = new vscode.MarkdownString(
-      "Actual Testing More."
-    );
+    return this.vdfProxyService
+      .getVdfProxyHandler<IHoverResult>(document.uri)
+      .sendCommand(cmd, token)
+      .then(result => {
+        console.log(result);
 
-    var item: vscode.Hover = new vscode.Hover(s);
-    item.contents.push(ss);
-    item.contents.push(sss);
+        // if (result) {
+        //   var s: vscode.MarkdownString = new vscode.MarkdownString(result.TreeItemCollapsibleState.);
+        //   var ss: vscode.MarkdownString = new vscode.MarkdownString(
+        //     "##Testing More."
+        //   );
+        //   var sss: vscode.MarkdownString = new vscode.MarkdownString(
+        //     "Actual Testing More."
+        //   );
 
-    return Promise.resolve(item);
+        //   var item: vscode.Hover = new vscode.Hover(s);
+        //   item.contents.push(ss);
+        //   item.contents.push(sss);
 
-    // return this.vdfProxyService
-    //   .getVdfProxyHandler<IDefinitionResult>(document.uri)
-    //   .sendCommand(cmd, token)
-    //   .then(result => {
-    //     if (result) {
-    //       const locations = result.definitions.map(def => {
-    //         const uri = vscode.Uri.file(def.filePath);
-    //         return new vscode.Location(
-    //           uri,
-    //           new vscode.Range(
-    //             def.range.startLine,
-    //             def.range.startColumn,
-    //             def.range.endLine,
-    //             def.range.endColumn
-    //           )
-    //         );
-    //       });
-    //       if (locations.length > 0) return Promise.resolve(locations);
-    //     }
-    //     return Promise.reject(null);
-    //   });
+        // return Promise.resolve(item);
+        // const locations = result.definitions.map(def => {
+        //   const uri = vscode.Uri.file(def.filePath);
+        //   return new vscode.Location(
+        //     uri,
+        //     new vscode.Range(
+        //       def.range.startLine,
+        //       def.range.startColumn,
+        //       def.range.endLine,
+        //       def.range.endColumn
+        //     )
+        //   );
+        // });
+        // if (locations.length > 0) return Promise.resolve(locations);
 
-    return Promise.reject(null);
+        return Promise.reject(null);
+      });
   }
 }
