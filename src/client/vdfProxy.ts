@@ -174,7 +174,7 @@ export class VdfProxy implements vscode.Disposable {
       case IPCMessage.LanguageServerIndexingComplete:
         this.ui.IsUpdatingIndex = false;
         vscode.window.setStatusBarMessage(
-          `VDF Language Server Indexing Completed: Processing Time ${result.metaData.trim()} seconds`,
+          `VDF Language Server Indexing Completed: Processing Time ${result.metadata.trim()} seconds`,
           10000
         );
         break;

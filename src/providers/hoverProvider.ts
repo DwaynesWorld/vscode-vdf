@@ -3,75 +3,60 @@ import { CommandType, ICommand, IHoverResult } from "../client/proxy";
 import { VdfProxyService } from "../client/vdfProxyService";
 
 export class VdfHoverProvider implements vscode.HoverProvider {
-  constructor(private vdfProxyService: VdfProxyService) {}
+	constructor(private vdfProxyService: VdfProxyService) {}
 
-  provideHover(
-    document: vscode.TextDocument,
-    position: vscode.Position,
-    token: vscode.CancellationToken
-  ): Thenable<vscode.Hover> {
-    // Comment line
-    if (document.lineAt(position.line).text.match(/^\s*\/\//)) {
-      return Promise.resolve(null);
-    }
+	provideHover(
+		document: vscode.TextDocument,
+		position: vscode.Position,
+		token: vscode.CancellationToken
+	): vscode.ProviderResult<vscode.Hover> {
+		// Comment line
+		if (document.lineAt(position.line).text.match(/^\s*\/\//)) {
+			return Promise.resolve(null);
+		}
 
-    // What the hell!
-    if (position.character <= 0) {
-      return Promise.resolve(null);
-    }
+		// silly!
+		if (position.character <= 0) {
+			return Promise.resolve(null);
+		}
 
-    const fileName = document.fileName;
-    const range = document.getWordRangeAtPosition(position);
-    const possibleWord = document.getText(range);
-    const command = CommandType.Definitions;
-    const lineIndex = position.line;
-    const columnIndex = range.isEmpty
-      ? position.character
-      : range.end.character;
+		const fileName = document.fileName;
+		const range = document.getWordRangeAtPosition(position);
+		const possibleWord = document.getText(range);
+		const command = CommandType.Hover;
+		const lineIndex = position.line;
+		const columnIndex = range.isEmpty
+			? position.character
+			: range.end.character;
 
-    const cmd: ICommand<IHoverResult> = {
-      command,
-      possibleWord,
-      fileName,
-      columnIndex,
-      lineIndex
-    };
+		const cmd: ICommand<IHoverResult> = {
+			command,
+			possibleWord,
+			fileName,
+			columnIndex,
+			lineIndex
+		};
 
-    return this.vdfProxyService
-      .getVdfProxyHandler<IHoverResult>(document.uri)
-      .sendCommand(cmd, token)
-      .then(result => {
-        console.log(result);
+		return this.vdfProxyService
+			.getVdfProxyHandler<IHoverResult>(document.uri)
+			.sendCommand(cmd, token)
+			.then(result => {
+				console.log(result);
 
-        // if (result) {
-        //   var s: vscode.MarkdownString = new vscode.MarkdownString(result.TreeItemCollapsibleState.);
-        //   var ss: vscode.MarkdownString = new vscode.MarkdownString(
-        //     "##Testing More."
-        //   );
-        //   var sss: vscode.MarkdownString = new vscode.MarkdownString(
-        //     "Actual Testing More."
-        //   );
+				if (result) {
+					var item: vscode.Hover = new vscode.Hover(
+						new vscode.MarkdownString(result.main)
+					);
 
-        //   var item: vscode.Hover = new vscode.Hover(s);
-        //   item.contents.push(ss);
-        //   item.contents.push(sss);
+					item.contents.push({ language: "vdf", value: result.contents });
 
-        // return Promise.resolve(item);
-        // const locations = result.definitions.map(def => {
-        //   const uri = vscode.Uri.file(def.filePath);
-        //   return new vscode.Location(
-        //     uri,
-        //     new vscode.Range(
-        //       def.range.startLine,
-        //       def.range.startColumn,
-        //       def.range.endLine,
-        //       def.range.endColumn
-        //     )
-        //   );
-        // });
-        // if (locations.length > 0) return Promise.resolve(locations);
+					if (result.hoverMetadata && result.hoverMetadata.trim() != "")
+						item.contents.push(new vscode.MarkdownString(result.hoverMetadata));
 
-        return Promise.reject(null);
-      });
-  }
+					return Promise.resolve(item);
+				}
+
+				return Promise.reject(null);
+			});
+	}
 }

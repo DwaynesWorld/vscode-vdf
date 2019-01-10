@@ -50,7 +50,7 @@ namespace VDFServer.Parser
                     IsInternal = true,
                     MessageType = IPCMessage.LanguageServerIndexingComplete,
                     Message = ServerConstants.LANGUAGE_SERVER_INDEXING_COMPLETE,
-                    MetaData = $"{watch.ElapsedMilliseconds / 1000}"
+                    Metadata = $"{watch.ElapsedMilliseconds / 1000}"
                 };
 
                 Console.WriteLine(_serializer.Serialize(results));

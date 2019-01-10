@@ -82,7 +82,7 @@
 		"watch": "tsc -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
 		"test": "mocha \"./out/test/*.logic.test.js\"",
-		"clean-ext": "del-cli out/",
+		"clean-ext": "del-cli out/ && del-cli *.vsix",
 		"clean-dev": "del-cli src/server/VDFServer/VDFServer/bin",
 		"clean-prod": "del-cli resources/server",
 		"build-ext": "tsc -p ./",
@@ -90,9 +90,9 @@
 		"build": "yarn build-deps && yarn build-ext",
 		"package-deps-osx": "yarn clean-prod && cd src/server/VDFServer/VDFServer && dotnet publish --configuration Release --runtime osx-x64 --self-contained --output \"../../../../resources/server\"",
 		"package-deps-win": "yarn clean-prod && cd src/server/VDFServer/VDFServer && dotnet publish --configuration Release --runtime win-x64 --self-contained --output \"../../../../resources/server\"",
-		"package-osx": "yarn version minor && yarn clean-ext && yarn build-ext && yarn package-deps-osx && yarn add vsce && vsce package",
-		"package-win": "yarn version minor && yarn clean-ext && yarn build-ext && yarn package-deps-win && yarn add vsce && vsce package",
-		"install-ext": "code --install-extension vls-0.2.0.vsix"
+		"package-osx": "yarn clean-ext && yarn build-ext && yarn package-deps-osx && yarn add vsce && vsce package",
+		"package-win": "yarn clean-ext && yarn build-ext && yarn package-deps-win && yarn add vsce && vsce package",
+		"install-ext": "code --install-extension vls-0.3.0.vsix"
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.3",

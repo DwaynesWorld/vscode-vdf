@@ -8,6 +8,6 @@ namespace VDFServer.Data.Models
         public bool IsInternal = false;
         public IPCMessage MessageType { get; set; } = IPCMessage.None;
         public string Message { get; set; } = "";
-        public string MetaData { get; set; } = "";
+        public string Metadata { get; set; } = "";
     }
 }

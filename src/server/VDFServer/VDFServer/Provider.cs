@@ -77,6 +77,17 @@ namespace VDFServer
                     var hoverResults = ProvideHover(request);
                     if (hoverResults != null)
                         results = _serializer.Serialize(hoverResults);
+                    else
+                    {
+                        var notFound = new CommandResult
+                        {
+                            IsInternal = true,
+                            RequestId = request.Id,
+                            MessageType = IPCMessage.SymbolNotFound,
+                            Message = ServerConstants.SYMBOL_NOT_FOUND
+                        };
+                        results = _serializer.Serialize(notFound);
+                    }
                     break;
                 default:
                     var defaultResult = new CommandResult
@@ -187,13 +198,75 @@ namespace VDFServer
 
         private DiagnosticResult ProvideDiagnostics(Request request)
         {
-            //if (!File.Exists(request.Path))
+            if (!File.Exists(request.Path))
+                return null;
+
+            var containers = new Stack<LanguageSymbol>();
+            var inProcessSymbols = new Stack<LanguageSymbol>();
+            var symbols = new List<LanguageSymbol>();
+
+            var lines = File.ReadAllLines(request.Path);
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var originalLine = lines[i];
+                var line = lines[i].Trim();
+                var commentPos = line.IndexOf("//");
+                if (commentPos != -1)
+                    line = line.Remove(commentPos);
+
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+
+                var symbol = _internalParser.ParseLine(line, originalLine);
+
+                // TODO: Add checks for Declaration lines
+                // TODO: Add checks for End Declaration lines
+                // TODO: Add checks for For All Macro Lines (ex: Move, Get, Send, If, to)
+            }
+
             return null;
         }
 
         private HoverResult ProvideHover(Request request)
         {
-            return null;
+            var matches = _ctx.Symbols
+                .Include(t => t.File)
+                .Where(t => t.Name.ToUpper() == request.PossibleWord.ToUpper());
+
+            if (matches == null)
+                return null;
+
+            var count = matches.Count();
+
+            if (count == 0)
+                return null;
+
+            var result = new HoverResult();
+            if (count > 1)
+            {
+                result.RequestId = request.Id;
+                result.Main = "Multiple defintions found.";
+                return result;
+            }
+
+            var match = matches.First();
+            result.RequestId = request.Id;
+            result.Main = result.GetStyledMainSection(match.Name, match.Type);
+            if (File.Exists(match.File.FilePath))
+            {
+                // TODO: Parse documentation if exists, for now return declaration line
+                var lines = File.ReadAllLines(match.File.FilePath);
+                var decl = lines[match.StartLine].Trim();
+                var commentPos = decl.IndexOf("//");
+
+                if (commentPos != -1)
+                    decl = decl.Remove(commentPos);
+
+                result.Contents = decl;
+            }
+
+            return result;
         }
     }
 }
